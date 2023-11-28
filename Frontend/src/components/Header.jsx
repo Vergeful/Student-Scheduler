@@ -4,7 +4,7 @@ import '../styles/components.scss'
 export default function Header() {
     return (
         <div className="header">
-            Header
+            <h1>Student Scheduler</h1>
         </div>
     )
 }

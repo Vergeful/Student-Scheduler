@@ -16,7 +16,6 @@ import StudentHome from './pages/student/StudentHome'
 import StudentSemester from './pages/student/StudentSemester'
 import StudentCourse from './pages/student/StudentCourse'
 
-
 // Admin pages
 import AdminHome from './pages/administrator/AdminHome'
 import SelectedDegree from './pages/administrator/SelectedDegree'

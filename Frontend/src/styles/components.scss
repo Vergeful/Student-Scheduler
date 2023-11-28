@@ -7,18 +7,67 @@
    
    .header{
       position: relative;
-      height: 15vh;
+      height: 10vh;
       background-color: v.$red;
       display: flex;
       align-items: center;
       padding: 0 20px;
+      font-size: 3rem;
+      font-weight: bold;
+
+      h1{
+         letter-spacing: .4rem;
+      }
    }
 
    main{
       display: flex;
       justify-content: center;
       background-color: v.$blue;
-      height: 80vh;
+      height: 85vh;
+      display: flex;
+      align-items: center;
+
+      .login{
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         padding: 10px;
+         row-gap: 50px;
+         width: 40%;
+         height: 80%;
+         font-size: 1.75rem;
+         text-align: center;
+         background-color: v.$pale;
+         border-radius: 5px;
+         box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+
+         form{
+            display: flex;
+            flex-direction: column;
+            row-gap: 25px;
+
+            button{
+               background-color: v.$red;
+               border-radius: 5px;
+            }
+
+            button:hover{
+               position: relative;
+               top: -2px;
+            }
+
+            input{
+               text-indent: 10px;
+            }
+            input:focus{
+               color: v.$red;
+               outline-color: v.$brown;
+            }
+         }
+      }
+
    }
 
    .footer{
