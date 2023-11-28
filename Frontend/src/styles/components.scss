@@ -1,0 +1,44 @@
+@use 'variables' as v;
+
+.site-wrapper{
+   display: flex;
+   flex-direction: column;
+   height: 100vh;
+   
+   .header{
+      position: relative;
+      height: 15vh;
+      background-color: v.$red;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+   }
+
+   main{
+      display: flex;
+      justify-content: center;
+      background-color: v.$blue;
+      height: 80vh;
+   }
+
+   .footer{
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      height: 5vh;
+      background-color: v.$brown;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+
+      span{
+         color:red;
+         margin: 0 5px;
+         font-size: 1.5rem;
+      }  
+   }
+   
+}
