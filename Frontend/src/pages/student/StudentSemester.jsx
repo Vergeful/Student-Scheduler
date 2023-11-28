@@ -1,9 +1,9 @@
 import React from "react"
 
-export default function SelectedSemester() {
+export default function StudentSemester() {
     return (
         <div>
-            Selected Semester
+            Student Semester
         </div>
     )
 }

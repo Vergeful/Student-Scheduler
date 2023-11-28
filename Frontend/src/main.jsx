@@ -12,8 +12,8 @@ import NotFound from './pages/NotFound'
 
 // Student pages
 import StudentHome from './pages/student/StudentHome'
-import SelectedSemester from './pages/student/SelectedSemester'
-import SelectedCourse from './pages/student/SelectedCourse'
+import StudentSemester from './pages/student/StudentSemester'
+import StudentCourse from './pages/student/StudentCourse'
 
 
 // Admin pages
@@ -33,30 +33,36 @@ const router = createBrowserRouter([
         element: <Login/>
       },
 
+      // Student routes
       {
         path: "student",
         element: <StudentHome/>
       },
+      {
+        path: "student/semester/:id",
+        element: <StudentSemester/>
+      },
+      {
+        path: "student/semester/:id/course/:id",
+        element: <StudentCourse/>
+      },
 
+      // Admin routes
       {
         path: "admin",
-        element: <AdminHome/>,
-        children : [
-          {
-            path: "degree/:id",
-            element: <SelectedDegree/>,
-            children: [
-              {
-                path: "required-course/:id",
-                element: <EditSelectedCourse/>
-              }
-            ]
-          },
-          {
-            path: "department-course/:id",
-            element: <EditProf/>,
-          }
-        ]
+        element: <AdminHome/>
+      },
+      {
+        path: "admin/degree/:id",
+        element: <SelectedDegree/>
+      },
+      {
+        path: "admin/degree/:id/course/:id",
+        element: <EditSelectedCourse/>
+      },
+      {
+        path: "admin/dept-course/:id",
+        element: <EditProf/>
       },
     ]
   },
