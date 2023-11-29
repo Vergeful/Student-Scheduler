@@ -6,6 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
+
 // General purpose 
 import Layout from './components/Layout'
 import Login from './pages/Login'
@@ -21,6 +22,9 @@ import AdminHome from './pages/administrator/AdminHome'
 import SelectedDegree from './pages/administrator/SelectedDegree'
 import EditSelectedCourse from './pages/administrator/EditSelectedCourse'
 import EditProf from './pages/administrator/EditProf'
+
+// Authentication
+import { AuthProvider } from './Context/authProvider';
 
 
 const router = createBrowserRouter([
@@ -74,11 +78,13 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <div className="app">
-      <div className="container">
-          <RouterProvider router={router} />
+      <div className="app">
+        <div className="container">
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </div>
       </div>
-    </div>
   </React.StrictMode>
 );
 

@@ -37,7 +37,7 @@
          row-gap: 50px;
          width: 40%;
          height: 80%;
-         font-size: 1.75rem;
+         font-size: 1.25rem;
          text-align: center;
          background-color: v.$pale;
          border-radius: 5px;
@@ -65,6 +65,23 @@
                color: v.$red;
                outline-color: v.$brown;
             }
+
+            .error{
+               font-size: 1rem;
+               color: red;
+               background-color: black;
+            }
+
+            .radio-buttons{
+               display: flex;
+               justify-content: center;
+               column-gap: 10px;
+
+               input[type='radio'] {
+                  accent-color: v.$brown;
+              }
+            }
+
          }
       }
 
