@@ -1,0 +1,36 @@
+@use 'variables' as v;
+
+  .background-box {
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Stack flex items vertically */
+    justify-content: center; /* Center items vertically in the container */
+    align-items: center; /* Center items horizontally in the container */
+    height: 100vh; /* Make the container fill the entire height of the viewport */
+    text-align: center; /* Center the text horizontally */
+  }
+  .background-box h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px; /* Adjust the bottom margin as needed */
+  }
+  .buttons {
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 2rem; /* Space between the buttons */
+  }
+  .webtool-button {
+    background-color: v.$brown; /* Lighter teal */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    color: black;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 200px;
+    width: 250px;
+    font-size: 25px;
+  }
+  .webtool-button:hover {
+    background-color: #e8bd80; /* Darker shade on hover */
+  }

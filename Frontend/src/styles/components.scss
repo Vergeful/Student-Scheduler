@@ -8,7 +8,7 @@
    .header{
       position: relative;
       height: 10vh;
-      background-color: v.$red;
+      background-color: v.$darkBlue;
       display: flex;
       align-items: center;
       padding: 0 20px;
@@ -49,7 +49,7 @@
             row-gap: 25px;
 
             button{
-               background-color: v.$red;
+               background-color: v.$darkBlue;
                border-radius: 5px;
             }
 
@@ -62,7 +62,7 @@
                text-indent: 10px;
             }
             input:focus{
-               color: v.$red;
+               color: v.$darkBlue;
                outline-color: v.$brown;
             }
 

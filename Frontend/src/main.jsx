@@ -21,7 +21,7 @@ import StudentCourse from './pages/student/StudentCourse'
 import AdminHome from './pages/administrator/AdminHome'
 import SelectedDegree from './pages/administrator/SelectedDegree'
 import EditSelectedCourse from './pages/administrator/EditSelectedCourse'
-import EditProf from './pages/administrator/EditProf'
+import EditCourseList from './pages/administrator/EditCourseList'
 
 // Authentication
 import { AuthProvider } from './Context/authProvider';
@@ -53,11 +53,11 @@ const router = createBrowserRouter([
 
       // Admin routes
       {
-        path: "admin",
+        path: "/admin/home",
         element: <AdminHome/>
       },
       {
-        path: "admin/degree/:id",
+        path: "/admin/degree",
         element: <SelectedDegree/>
       },
       {
@@ -65,8 +65,8 @@ const router = createBrowserRouter([
         element: <EditSelectedCourse/>
       },
       {
-        path: "admin/dept-course/:id",
-        element: <EditProf/>
+        path: "/admin/dept-courses",
+        element: <EditCourseList/>
       },
     ]
   },
