@@ -1,0 +1,99 @@
+@use 'variables' as v;
+
+/*Styling to put certain elements on the same row.*/
+.postRow{
+    display: inline-flex;
+}
+.postField {
+    width: fit-content;
+    margin: 0.2rem 0.6rem;
+}
+
+/*Styling to put elements on the same line, but only at certain screen widths.*/
+.sameLineFlex{
+    display: inline-flex;
+}
+.same-line {
+    display: flex; // This makes .same-line a flex container
+    align-items: center; // This vertically centers the items in the flex container
+    justify-content: flex-start; // This aligns items to the start of the container
+
+    .largeText {
+        margin-right: 10px; // Adjust as needed for spacing
+    }
+
+    .editIcon {
+        // Add styles for the icon here, if necessary
+    }
+}
+
+/*Styling for the title.*/
+.title{
+    background-color: v.$blue;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    width: fit-content;
+    box-shadow: 3px 3px #00000033;
+    font-size: 1.5rem;
+    justify-content: space-between;
+    height: 200px;
+}
+
+
+.largeText{
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.course-list-bg{
+    width: calc(100vw - 8rem);
+    height: calc(100vh - 10.5rem);
+    margin: 2rem auto auto auto;
+    background-color: v.$pale;
+    padding: 2rem;
+    border-radius: 1rem;
+    padding-bottom: 1rem;
+}
+
+.course{
+    background-color: v.$blue;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    width: calc(100vw - 12rem);
+    margin-right: 1rem;
+}
+.search-line {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    align-self: start;
+}
+.search-box {
+    background-color: v.$blue; 
+    margin-top: -45px; /* Adjust the number as needed to move it up */
+    display: flex;
+    align-items: center;
+    padding: 0.5rem; // Adjust padding as needed
+    border-radius: 0.5rem; // Adjust to match your design
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1); // Optional: adds shadow to the entire search box
+}
+.search-icon {
+    color: black; // or any color you want for the icon
+    margin-right: 0.5rem; // adds spacing between the icon and the input field
+}
+.searchbar {
+    border: none; // removes the border
+    outline: none; // removes the outline
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem; // rounds the corners of the input field
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1); // adds a subtle shadow
+}
+  
+/*Styling for the list of posts.*/
+.courseList{
+    overflow-y: auto;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    max-height: calc(100% - 12rem);
+}
