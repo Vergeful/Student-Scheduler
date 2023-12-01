@@ -7,7 +7,6 @@ const helmet= require('helmet')
 require('dotenv').config() // allows access to .env (local environment) variables via process.env
 require('express-async-errors') // middleware for errors
 
-
 //MIDDLEWARE:
 // Built in middleware function in express that parses incoming requests with JSON payloads:
 app.use(express.json());
@@ -23,17 +22,15 @@ app.use(cors())
 app.use(helmet())
 app.use(rateLimit())
 
-
-// Middleware
-
-
-
-
-
+// Middleware if there is an error in finding page (404 status code):
+const cantFindMiddleware = require('./Middleware/cantFind');
 
 // Routes
+app.use('/api', loginRouter)
+app.use('/api', adminRouter)
+app.use('/api', studentRouter)
 
-
+app.use(cantFindMiddleware)
 
 const port = process.env.PORT || 3000
 
