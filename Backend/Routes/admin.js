@@ -11,7 +11,8 @@ const {
     deleteAntirequisite,
     createPrerequisite,
     deletePrerequisite,
-    createProf,
+    getProfs,
+    addProf,
     deleteProf
 } = require('../Controllers/admin')
 
@@ -20,7 +21,7 @@ router.route('/admin/degree/:id').get(getDegreeCourses).post(createRequiredCours
 router.route('/admin/degree/:id/course/:id').get(getPrerequisitesAntirequisites)
 router.route('/admin/degree/:id/course/:id/anti/:id').post(createAntirequisite).delete(deleteAntirequisite)
 router.route('/admin/degree/:id/course/:id/pre/:id').post(createPrerequisite).delete(deletePrerequisite)
-router.route('/admin/dept-course/:id').post(createProf).delete(deleteProf);
+router.route('/admin/dept-course/:id').get(getProfs).post(addProf).delete(deleteProf);
 
 module.exports = router
 

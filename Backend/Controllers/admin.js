@@ -37,7 +37,11 @@ const deletePrerequisite= async(req, res) => {
 
 }
 
-const createProf= async(req, res) => {
+const getProfs = async(req, res) => {
+
+}
+
+const addProf= async(req, res) => {
 
 }
 
@@ -56,6 +60,7 @@ module.exports = {
     deleteAntirequisite,
     createPrerequisite,
     deletePrerequisite,
-    createProf,
+    getProfs,
+    addProf,
     deleteProf
 }

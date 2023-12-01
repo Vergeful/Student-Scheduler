@@ -11,7 +11,6 @@ require('express-async-errors') // middleware for errors
 // Built in middleware function in express that parses incoming requests with JSON payloads:
 app.use(express.json());
 
-
 // Middleware for security:
 app.set('trust proxy', 1)
 app.use(rateLimit({
