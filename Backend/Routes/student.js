@@ -19,18 +19,25 @@ const {
 
 } = require('../Controllers/student')
 
-router.route('/degrees').get(getMajorMinorConc)
-router.route('/semesters').get(getSemesters)
-router.route('/major').patch(updateMajor)
-router.route('/minor').patch(updateMinor)
-router.route('/conc').patch(updateConc)
-router.route('/courses').get(getAllCourses)
-router.route('/course/:id').patch(createRating)
-router.route('/semester-courses:id').get(getSemesterCourses)
-router.route('/semester-uncompleted-degree:id').get(getUncompletedDegreeCoursesForSemester)
-router.route('/semester-enrolled:id').get(getEnrolledCoursesForSemester)
-router.route('/semester/:id/course/:id').get(getSemesterCourse).patch(updateEnrollmentForCourse)
-router.route('/semester/:id/course-rating/:id').get(getCourseAvgRating)
-router.route('/semester/:id/course-pre-anti/:id').get(getPrerequisitesAntirequisites)
+router.get('/:studentId/degrees', getMajorMinorConc)
+router.get('/semesters', getSemesters)
+
+router.patch('/:studentId/major/:majId', updateMajor)
+router.patch('/:studentId/minor/:minId', updateMinor)
+router.patch('/:studentId/conc/:concId', updateConc)
+
+router.get('/courses', getAllCourses)
+router.post('/:studentId/course/:id', createRating)
+
+router.get('/semester-courses:id', getSemesterCourses)
+router.get('/:studentId/semester-uncompleted-degree/:id', getUncompletedDegreeCoursesForSemester)
+router.get('/:studentId/semester-enrolled:id', getEnrolledCoursesForSemester)
+
+router.route('/semester/:id/course/:id')
+    .get(getSemesterCourse)
+    .patch(updateEnrollmentForCourse)
+
+router.get('/semester/:id/course-rating/:id', getCourseAvgRating)
+router.get('/semester/:id/course-pre-anti/:id', getPrerequisitesAntirequisites)
 
 module.exports = router
