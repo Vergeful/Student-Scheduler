@@ -27,9 +27,9 @@ router.patch('/:studentId/minor/:minId', updateMinor)
 router.patch('/:studentId/conc/:concId', updateConc)
 
 router.get('/courses', getAllCourses)
-router.post('/:studentId/course/:id', createRating)
+router.post('/:studentId/course/:courseId', createRating)
 
-router.get('/semester-courses:id', getSemesterCourses)
+router.get('/semester-courses/:semId', getSemesterCourses)
 router.get('/:studentId/semester-uncompleted-degree/:id', getUncompletedDegreeCoursesForSemester)
 router.get('/:studentId/semester-enrolled:id', getEnrolledCoursesForSemester)
 

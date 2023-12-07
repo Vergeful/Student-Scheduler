@@ -83,11 +83,37 @@ const getAllCourses= async(req, res) => {
 }
 
 const createRating= async(req, res) => {
-    
+    const { studentId, courseId } = req.params;
+    const { difficulty, comment} = req.body;
+
+    const insertQuery = `INSERT INTO RATING VALUES (?, ?, ?, ?)`;
+    const insertValues = [studentId, courseId, difficulty, comment];
+
+    await pool.promise().query
+        (insertQuery, insertValues, (err, data) => {
+            if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+            return res.json("Post has been created.");
+        });
+
+    res.status(StatusCodes.OK).json();
 }
 
 const getSemesterCourses= async(req, res) => {
-    
+    const { semId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT	C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NUMBER, C.Description AS COURSE_DESCRIPTION,
+                P.FName AS PROFESSOR_FIRST_NAME, P.LName AS PROFESSOR_LAST_NAME
+        FROM	COURSE AS C, SEMESTER_OFFERS_COURSE AS S, PROFESSOR AS P
+        WHERE	S.Semester_id = ?
+        AND 	C.ID = S.Course_id
+        AND     C.Prof_id = P.ID`, 
+    [semId]);
+
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Semester courses could not be found' });
+    }
 }
 
 const getUncompletedDegreeCoursesForSemester= async(req, res) => {
