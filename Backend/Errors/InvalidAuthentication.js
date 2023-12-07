@@ -2,7 +2,7 @@
 // a. if user doesn't exist or incorrect password is entered
 // b. if req.headers.authorization doesn't exist, doesn't start with Bearer or if the JWT cannot be verified.
 
-const CustomError = require('./custom')
+const CustomError = require('../Errors/CustomError')
 const { StatusCodes } = require('http-status-codes')
 
 class InvalidAuthenticationError extends CustomError {

@@ -1,45 +1,56 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const { getConnection, testConnection } = require('./Database/connect');
 
-const cors = require('cors')
-const helmet= require('helmet')
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+const helmet = require('helmet');
+require('dotenv').config();
+require('express-async-errors');
 
-require('dotenv').config() // allows access to .env (local environment) variables via process.env
-require('express-async-errors') // middleware for errors
-
-//MIDDLEWARE:
-// Built in middleware function in express that parses incoming requests with JSON payloads:
-app.use(express.json());
-
-// Middleware for security:
-app.set('trust proxy', 1)
-app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
-    max: 50 // 50 requests can be made per windowMs
-}))
-app.use(cors())
-app.use(helmet())
-app.use(rateLimit())
-
-// Middleware if there is an error in finding page (404 status code):
+// Import routers
+const adminRoutes = require('./Routes/admin');
+const loginRouter = require('./Routes/login');
+const studentRouter = require('./Routes/student');
 const cantFindMiddleware = require('./Middleware/cantFind');
 
-// Routes
-app.use('/api', loginRouter)
-app.use('/api', adminRouter)
-app.use('/api', studentRouter)
+const app = express();
 
-app.use(cantFindMiddleware)
+// Security-related middlewares should be set up at the beginning
+app.use(helmet());
+app.use(cors());  // CORS policy to allow cross-origin requests
 
-const port = process.env.PORT || 3000
+// Rate limiting to prevent brute-force attacks
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,  // 15 minutes
+    max: 50  // limit each IP to 50 requests per windowMs
+});
+app.use(limiter);
 
-const start = async () =>{
-    try{
-        // Connection here
-        app.listen(port, () => console.log(`Server is listening on port ${port}...`))
-    }catch(error){
-        console.log(error)
+// Built-in middleware function in express that parses incoming requests with JSON payloads
+app.use(express.json());
+
+// Setting up API routes
+app.use('/api', adminRoutes);
+app.use('/api', loginRouter);
+app.use('/api', studentRouter);
+
+// Middleware for 404 not found errors
+//app.use(cantFindMiddleware);
+
+// Start the server
+const port = 5173;
+async function startServer() {
+    try {
+        // Test database connection
+        await testConnection();
+        console.log('Database connection successful');
+
+        // Start listening for requests
+        app.listen(port, () => console.log(`Server is listening on port ${port}...`));
+    } catch (error) {
+        console.error('Failed to start the server:', error);
     }
 }
 
-start()
+// Call the startServer function to boot up your application
+startServer();
