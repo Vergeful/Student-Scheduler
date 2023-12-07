@@ -1,5 +1,5 @@
 const express = require('express');
-const { getConnection, testConnection } = require('./Database/connect');
+const {StatusCodes} = require('http-status-codes')
 
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
@@ -9,8 +9,8 @@ require('express-async-errors');
 
 // Import routers
 const adminRoutes = require('./Routes/admin');
-const loginRouter = require('./Routes/login');
-const studentRouter = require('./Routes/student');
+const loginRoutes = require('./Routes/login');
+const studentRoutes = require('./Routes/student');
 const cantFindMiddleware = require('./Middleware/cantFind');
 
 const app = express();
@@ -30,27 +30,21 @@ app.use(limiter);
 app.use(express.json());
 
 // Setting up API routes
-app.use('/api', adminRoutes);
-app.use('/api', loginRouter);
-app.use('/api', studentRouter);
+app.use('/api/admin', adminRoutes);
+app.use('/api', loginRoutes);
+app.use('/api/student', studentRoutes);
 
 // Middleware for 404 not found errors
-//app.use(cantFindMiddleware);
+app.use(cantFindMiddleware);
 
 // Start the server
 const port = 5173;
-async function startServer() {
-    try {
-        // Test database connection
-        await testConnection();
-        console.log('Database connection successful');
 
-        // Start listening for requests
-        app.listen(port, () => console.log(`Server is listening on port ${port}...`));
-    } catch (error) {
-        console.error('Failed to start the server:', error);
-    }
-}
+app.use((err,req,res,next) =>{
+    console.log(err.stack);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Something broke');
+});
 
-// Call the startServer function to boot up your application
-startServer();
+app.listen(port, () => {
+    console.log(`Server is listening on port ${port}...`);
+});

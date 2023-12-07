@@ -1,28 +1,17 @@
 const {StatusCodes} = require('http-status-codes')
-const { db } = require('../Database/connect');
+const { pool } = require('../Database/connect');
 const {BadRequestError, CantFindError} = require('../Errors')
 
 const getAdminInfo = async(req, res) => {
-    let connection;
-    try {
-        const { adminId } = req.params;
-        connection = await db.getConnection();
-        const [rows] = await connection.query(`
-            SELECT Dep_id FROM ADMIN WHERE Id = ?
-        `, [adminId]);
-        if (rows.length > 0) {
+    const { adminId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT Dep_id FROM ADMIN WHERE Id = ?`, [adminId]);
+        if (rows.length == 1) {
             res.status(StatusCodes.OK).json(rows[0]);
+            console.log(rows[0]);
         } else {
             res.status(StatusCodes.NOT_FOUND).json({ error: 'Admin not found' });
         }
-    } catch (error) {
-        console.error(error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Something went wrong' });
-    } finally {
-        if (connection) {
-            connection.release();
-        }
-    }
 };
 
 const getDepartmentCourses = async(req, res) => {
