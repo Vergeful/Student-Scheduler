@@ -5,13 +5,15 @@
   export default function AdminHome() {
     let navigate = useNavigate();
     const [degrees, setDegrees] = useState([]);
+    const adminId = "1000";
+    const departmentId = '10'; 
+
   
     useEffect(() => {
-      const departmentId = '10'; 
 
       const fetchDegrees = async () => {
         try {
-          const response = await fetch(`http://localhost:5173/api/departments/${departmentId}/degrees`);
+          const response = await fetch(`http://localhost:3000/api/admin/departments/${departmentId}/degrees`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -38,14 +40,14 @@
   
     return (
       <div className="background-box">
-        <h1>Admin Dashboard</h1>
+        <h1 style={{paddingBottom: `15px`}}>Admin Dashboard</h1>
         <div className="buttons">
           {degrees.map((degree) => (
             <button
-              key={degree.Id}
+              key={degree.ID}
               className="webtool-button"
-              onClick={() => handleNavigation(degree.Id)}
-            >
+              onClick={() => handleNavigation(`/admin/degree-courses/${departmentId}/degree/${degree.ID}`)}
+              >
               {degree.Name}
             </button>
           ))}

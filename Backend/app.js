@@ -17,7 +17,9 @@ const app = express();
 
 // Security-related middlewares should be set up at the beginning
 app.use(helmet());
-app.use(cors());  // CORS policy to allow cross-origin requests
+app.use(cors({
+    origin: 'http://localhost:5173' // Your React app's running port
+}));  // CORS policy to allow cross-origin requests
 
 // Rate limiting to prevent brute-force attacks
 const limiter = rateLimit({
@@ -38,7 +40,7 @@ app.use('/api/student', studentRoutes);
 app.use(cantFindMiddleware);
 
 // Start the server
-const port = 5173;
+const port = 3000;
 
 app.use((err,req,res,next) =>{
     console.log(err.stack);

@@ -1,4 +1,5 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
+import { useParams } from 'react-router-dom'; 
 import "../../styles/courseList.scss"
 import "../../styles/popup.scss"
 import EditCoursePopup from "../../components/EditCoursePopup";
@@ -8,63 +9,61 @@ import { faSearch, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 export default function EditCourseList() {
 
-    //START OF DUMMY DATA -> DELETE LATER, REPLACE WITH INSTANTIATION BY API CALL FUNCTION OF REAL DATA
-    const testCourse1 = {
-        Id: 1,
-        Code: "CPSC471",
-        Name: "Data Base Management Systems",
-        Description: "Conceptual, internal and external data bases. Relational data base systems and SQL. The normal forms, data base design, and the entity-relationship approach.",
-        PreReqs: [ {
-            Id: 2,
-            Code: "CPSC331",
-            Name: "Data Structures, Algorithms, and Their Analysis",
-            Description: "Conceptual, internal and external data bases. Relational data base systems and SQL. The normal forms, data base design, and the entity-relationship approach.",
-            Prereqs: [], // Nested prerequisites can be represented similarly
-            ProfId: 2}],
-        AntiReqs: [{
-            Id: 1,
-            Code: "CPSC471",
-            Name: "Data Base Management Systems",
-            Description: "Conceptual, internal and external data bases. Relational data base systems and SQL. The normal forms, data base design, and the entity-relationship approach.",
-            Prereqs: [], // Nested prerequisites can be represented similarly
-            Prof_id: 10}]
-          ,
-          ProfId: 10
-    };
-
-    const testCourse2 = {
-        Id: 2,
-        Code: "CPSC331",
-        Name: "Data Structures, Algorithms, and Their Analysis",
-        Description: "Fundamental data structures, including arrays, lists, stacks, queues, trees, hash tables, and graphs. Algorithms for searching and sorting. Introduction to the correctness and analysis of algorithms.",
-        PreReqs:  [],
-        AntiReqs: [],
-        ProfId: 2
-    };
-
-    const prof0 = {
-        Id: 0,
-        FName: "Undecided",
-        LName: ""
-    }
-    const prof1 = {
-        Id: 2,
-        FName: "John",
-        LName: "Doe"
-    }
-
-    const prof2 = {
-        Id: 10,
-        FName: "Issac",
-        LName: "Newton"
-    }
-    //END OF DUMMY DATA
+    const { depId, degreeId } = useParams(); // Get the parameters from the URL
 
     const [searchValue, setSearchValue] = useState('');
     const [editingCourseId, setEditingCourseId] = useState(null);
-    const [courses, setCourses] = useState([testCourse1, testCourse2]); 
+    const [courses, setCourses] = useState([]);
+    const [reqCourses, setReqCourses] = useState([]); 
+    const [profs, setProfs] = useState([]); 
 
-    const profs = [prof0, prof1, prof2];
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/departments/${depId}/courses`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setCourses(data);
+            } catch (error) {
+                console.error("Fetching courses failed", error);
+            }
+        };
+
+        // Fetch professors
+        const fetchProfs = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/departments/${depId}/profs`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setProfs(data);
+            } catch (error) {
+                console.error("Fetching professors failed", error);
+            }
+        };
+
+        const fetchDegreeRequiredCourses = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/departments/${degreeId}/courses`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                // Assuming you have a state setter for required courses
+                setReqCourses(data);
+            } catch (error) {
+                console.error("Fetching degree required courses failed", error);
+            }
+        };
+
+        fetchCourses();
+        fetchProfs();
+        fetchDegreeRequiredCourses();
+    }, [degreeId, depId]);
 
     const getProfessorNameById = (profId) => {
         const prof = profs.find(professor => professor.Id === profId);
