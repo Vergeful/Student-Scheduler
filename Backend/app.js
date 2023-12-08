@@ -42,7 +42,7 @@ const port = 5173;
 
 app.use((err,req,res,next) =>{
     console.log(err.stack);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Something broke');
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Something broke.');
 });
 
 app.listen(port, () => {

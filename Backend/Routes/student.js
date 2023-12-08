@@ -14,9 +14,9 @@ const {
     getEnrolledCoursesForSemester,
     getSemesterCourse,
     getCourseAvgRating,
-    updateEnrollmentForCourse,
+    enrollInCourse,
+    unenrollInCourse,
     getPrerequisitesAntirequisites
-
 } = require('../Controllers/student')
 
 router.get('/:studentId/degrees', getMajorMinorConc)
@@ -30,12 +30,13 @@ router.get('/courses', getAllCourses)
 router.post('/:studentId/course/:courseId', createRating)
 
 router.get('/semester-courses/:semId', getSemesterCourses)
-router.get('/:studentId/semester-uncompleted-degree/:id', getUncompletedDegreeCoursesForSemester)
-router.get('/:studentId/semester-enrolled:id', getEnrolledCoursesForSemester)
+router.get('/:studentId/semester-uncompleted-degree/:semId', getUncompletedDegreeCoursesForSemester)
+router.get('/:studentId/semester-enrolled/:semId', getEnrolledCoursesForSemester)
 
-router.route('/semester/:id/course/:id')
+router.route('/:studentId/:id/course-enroll/:id')
     .get(getSemesterCourse)
-    .patch(updateEnrollmentForCourse)
+    .post(enrollInCourse)
+    .delete(unenrollInCourse)
 
 router.get('/semester/:id/course-rating/:id', getCourseAvgRating)
 router.get('/semester/:id/course-pre-anti/:id', getPrerequisitesAntirequisites)

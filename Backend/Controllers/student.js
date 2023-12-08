@@ -92,7 +92,7 @@ const createRating= async(req, res) => {
     await pool.promise().query
         (insertQuery, insertValues, (err, data) => {
             if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
-            return res.json("Post has been created.");
+            return res.json("Rating has been created.");
         });
 
     res.status(StatusCodes.OK).json();
@@ -117,11 +117,42 @@ const getSemesterCourses= async(req, res) => {
 }
 
 const getUncompletedDegreeCoursesForSemester= async(req, res) => {
-    
+    const {studentId, semId } = req.params;
+    const [rows] = await pool.promise().query(`
+            SELECT	    C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NUMBER
+            FROM		COURSE AS C, SEMESTER_OFFERS_COURSE AS T,
+                        STUDENT AS S, DEGREE_REQUIRES_COURSE AS R
+            WHERE	    T.Semester_id = ? AND C.ID = T.Course_id	
+            AND		    S.ID = ? AND S.Major_id = R.Degree_id
+            AND		    C.ID = R.Course_id
+            AND     C.ID NOT IN
+                    (   SELECT	    C.ID
+                        FROM		STUDENT AS S, ENROLLED_IN AS E, COURSE AS C
+                        WHERE 	    S.ID = ? AND S.ID = E.Student_id
+                        AND		    C.ID = E.Course_id)`, 
+        [semId, studentId, studentId]);
+    console.log(rows);
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Uncompleted degree-required courses offered during semester could not be found' });
+    }
 }
 
 const getEnrolledCoursesForSemester= async(req, res) => {
-    
+    const {studentId, semId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT	    C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NUMBER
+        FROM		COURSE AS C, SEMESTER_OFFERS_COURSE AS T, ENROLLED_IN AS E
+        WHERE	    T.Semester_id = ? AND C.ID = T.Course_id	
+        AND		    E.Student_id = ? AND E.Course_id = C.ID`, 
+    [semId, studentId]);
+    console.log(rows);
+    if (rows.length > 0) {
+    res.status(StatusCodes.OK).json(rows);
+    } else {
+    res.status(StatusCodes.NOT_FOUND).json({ error: 'Uncompleted degree-required courses offered during semester could not be found' });
+    }
 }
 
 const getSemesterCourse= async(req, res) => {
@@ -132,7 +163,11 @@ const getCourseAvgRating= async(req, res) => {
     
 }
 
-const updateEnrollmentForCourse= async(req, res) => {
+const enrollInCourse= async(req, res) => {
+    
+}
+
+const unenrollInCourse= async(req, res) => {
     
 }
 
@@ -153,7 +188,8 @@ module.exports = {
     getEnrolledCoursesForSemester,
     getSemesterCourse,
     getCourseAvgRating,
-    updateEnrollmentForCourse,
+    enrollInCourse,
+    unenrollInCourse,
     getPrerequisitesAntirequisites
 }
 
