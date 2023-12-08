@@ -92,16 +92,15 @@ const createRating= async(req, res) => {
     await pool.promise().query
         (insertQuery, insertValues, (err, data) => {
             if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
-            return res.json("Rating has been created.");
+            return res.json("Rating could not be created.");
         });
-
     res.status(StatusCodes.OK).json();
 }
 
 const getSemesterCourses= async(req, res) => {
     const { semId } = req.params;
     const [rows] = await pool.promise().query(`
-        SELECT	C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NUMBER, C.Description AS COURSE_DESCRIPTION,
+        SELECT	C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NAME, C.Description AS COURSE_DESCRIPTION,
                 P.FName AS PROFESSOR_FIRST_NAME, P.LName AS PROFESSOR_LAST_NAME
         FROM	COURSE AS C, SEMESTER_OFFERS_COURSE AS S, PROFESSOR AS P
         WHERE	S.Semester_id = ?
@@ -151,28 +150,100 @@ const getEnrolledCoursesForSemester= async(req, res) => {
     if (rows.length > 0) {
     res.status(StatusCodes.OK).json(rows);
     } else {
-    res.status(StatusCodes.NOT_FOUND).json({ error: 'Uncompleted degree-required courses offered during semester could not be found' });
+    res.status(StatusCodes.NOT_FOUND).json({ error: 'Enrolled courses for selected semester could not be found' });
     }
 }
 
 const getSemesterCourse= async(req, res) => {
-    
+    const {courseId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT  ID AS COURSE_ID, Code AS COURSE_CODE, Name AS COURSE_NAME
+        FROM    COURSE
+        WHERE   ID = ?`,
+    [courseId]);
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Course could not be found' });
+    }
 }
 
 const getCourseAvgRating= async(req, res) => {
-    
+    const {courseId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT	    AVG(Difficulty) AS AVERAGE_COURSE_DIFFICULTY
+        FROM 		RATING
+        WHERE	    Course_id = ?`, 
+    [courseId]);
+
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows[0]);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Average rating for course could not be found.' });
+    }
 }
 
 const enrollInCourse= async(req, res) => {
-    
+    const { studentId, courseId } = req.params;
+
+    const insertQuery = `INSERT INTO ENROLLED_IN VALUES (?, ?)`;
+    const insertValues = [studentId, courseId];
+
+    await pool.promise().query
+        (insertQuery, insertValues, (err, data) => {
+            if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+            return res.json("Course could not be enrolled into");
+        });
+    res.status(StatusCodes.OK).json();
+
 }
 
 const unenrollInCourse= async(req, res) => {
-    
+    const { studentId, courseId } = req.params;
+
+    const deleteQuery = `DELETE FROM	ENROLLED_IN
+                                WHERE	Student_id = ?
+                                AND		Course_id = ?`;
+    const deleteValues = [studentId, courseId];
+
+    await pool.promise().query
+        (deleteQuery, deleteValues, (err, data) => {
+            if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+            return res.json("Course could not be unenrolled from");
+        });
+    res.status(StatusCodes.OK).json();
 }
 
-const getPrerequisitesAntirequisites= async(req, res) => {
-    
+const getPrerequisites= async(req, res) => {
+    const {courseId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT	    C.Code AS COURSE_CODE, C.Name AS COURSE_NAME
+        FROM		COURSE AS C, COURSE_PREREQS AS P
+        WHERE	    P.Course_id = ?
+        AND 		C.ID = P.Prereq_id `, 
+    [courseId]);
+
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows[0]);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Course prereqs could not be found' });
+    }
+}
+
+const getAntirequisites= async(req, res) => {
+    const {courseId } = req.params;
+    const [rows] = await pool.promise().query(`
+        SELECT	    C.Code AS COURSE_CODE, C.Name AS COURSE_NAME
+        FROM		COURSE AS C, COURSE_ANTIREQS AS A
+        WHERE	    A.Course_id = ?
+        AND 		C.ID = A.Antireq_id `, 
+    [courseId]);
+
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows[0]);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Course antireqs could not be found' });
+    }
 }
 
 module.exports = {
@@ -190,7 +261,7 @@ module.exports = {
     getCourseAvgRating,
     enrollInCourse,
     unenrollInCourse,
-    getPrerequisitesAntirequisites
+    getPrerequisites,
+    getAntirequisites
 }
-
 

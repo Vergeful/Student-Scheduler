@@ -16,7 +16,8 @@ const {
     getCourseAvgRating,
     enrollInCourse,
     unenrollInCourse,
-    getPrerequisitesAntirequisites
+    getPrerequisites,
+    getAntirequisites
 } = require('../Controllers/student')
 
 router.get('/:studentId/degrees', getMajorMinorConc)
@@ -33,12 +34,13 @@ router.get('/semester-courses/:semId', getSemesterCourses)
 router.get('/:studentId/semester-uncompleted-degree/:semId', getUncompletedDegreeCoursesForSemester)
 router.get('/:studentId/semester-enrolled/:semId', getEnrolledCoursesForSemester)
 
-router.route('/:studentId/:id/course-enroll/:id')
+router.route('/:studentId/detailed-course/:courseId')
     .get(getSemesterCourse)
     .post(enrollInCourse)
     .delete(unenrollInCourse)
 
-router.get('/semester/:id/course-rating/:id', getCourseAvgRating)
-router.get('/semester/:id/course-pre-anti/:id', getPrerequisitesAntirequisites)
+router.get('/course-rating/:courseId', getCourseAvgRating)
+router.get('/course-pre/:courseId', getPrerequisites)
+router.get('/course-anti/:courseId', getAntirequisites)
 
 module.exports = router
