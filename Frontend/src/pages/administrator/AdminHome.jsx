@@ -5,7 +5,6 @@
   export default function AdminHome() {
     let navigate = useNavigate();
     const [degrees, setDegrees] = useState([]);
-    const adminId = "1000";
     const departmentId = '10'; 
 
   

@@ -9,6 +9,7 @@ import { faSearch, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 export default function EditCourseList() {
 
+    const adminId = '1000'; 
     const { depId, degreeId } = useParams(); // Get the parameters from the URL
 
     const [searchValue, setSearchValue] = useState('');
@@ -17,6 +18,8 @@ export default function EditCourseList() {
     const [reqCourses, setReqCourses] = useState([]); 
     const [profs, setProfs] = useState([]); 
 
+    const [coursePrerequisites, setCoursePrerequisites] = useState({});
+    const [courseAntirequisites, setCourseAntirequisites] = useState({});
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -35,7 +38,7 @@ export default function EditCourseList() {
         // Fetch professors
         const fetchProfs = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/admin/departments/${depId}/profs`);
+                const response = await fetch(`http://localhost:3000/api/admin/${adminId}/profs`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -48,7 +51,7 @@ export default function EditCourseList() {
 
         const fetchDegreeRequiredCourses = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/admin/departments/${degreeId}/courses`);
+                const response = await fetch(`http://localhost:3000/api/admin/${degreeId}/courses`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -65,12 +68,47 @@ export default function EditCourseList() {
         fetchDegreeRequiredCourses();
     }, [degreeId, depId]);
 
+    useEffect(() => {
+        const fetchCoursePrereqs = async (courseId) => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courseId}/prerequisites`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const prereqCodes = data.map(course => course.Code);
+                setCoursePrerequisites(prev => ({ ...prev, [courseId]: prereqCodes }));
+            } catch (error) {
+                console.error(`Fetching prerequisites for course ${courseId} failed`, error);
+            }
+        };
+
+        const fetchCourseAntireqs = async (courseId) => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courseId}/antirequisites`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const antireqCodes = data.map(course => course.Code);
+                setCourseAntirequisites(prev => ({ ...prev, [courseId]: antireqCodes }));
+            } catch (error) {
+                console.error(`Fetching prerequisites for course ${courseId} failed`, error);
+            }
+        };
+
+        courses.forEach(course => {
+            fetchCoursePrereqs(course.ID);
+            fetchCourseAntireqs(course.ID);
+        });
+    }, [courses]);
+
     const getProfessorNameById = (profId) => {
-        const prof = profs.find(professor => professor.Id === profId);
+        const prof = profs.find(professor => professor.Id == profId);
         if (prof) {
             return `${prof.FName} ${prof.LName}`;
         } else {
-            return 'Professor not found';
+            return 'UNDECIDED';
         }
     };
 
@@ -100,33 +138,88 @@ export default function EditCourseList() {
     };
 
     //if user submits popup with no info
-    const handleSaveEdit = (newPrerequisites, newAntirequisites, newProfId) => {
-        const courseIndex = courses.findIndex(course => course.Id === editingCourseId);
+    const handleSaveEdit = async (newPrerequisites, newAntirequisites, newProfId) => {
+        const courseIndex = courses.findIndex(course => course.ID === editingCourseId);
     
         if (courseIndex > -1) {
             const courseToUpdate = { ...courses[courseIndex] };
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courses[courseIndex].ID}/update/prerequisites`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prerequisites: newPrerequisites })
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+                console.log("Update successful", data);
+            } catch (error) {
+                console.error("Error updating prerequisites", error);
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courses[courseIndex].ID}/update/antirequisites`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ antirequisites: newAntirequisites })
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+                console.log("Update successful", data);
+            } catch (error) {
+                console.error("Error updating antirequisites", error);
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courses[courseIndex].ID}/update/${newProfId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+                console.log("Update successful", data);
+            } catch (error) {
+                console.error("Error updating professor", error);
+            }
+
+
+            setCoursePrerequisites(prev => ({
+                ...prev,
+                [editingCourseId]: newPrerequisites.map(prereq => ({ Code: prereq })),
+            }));
+
+            setCourseAntirequisites(prev => ({
+                ...prev,
+                [editingCourseId]: newAntirequisites.map(antireq => ({ Code: antireq })),
+            }));
+
+            courseToUpdate.Prof_Id = newProfId;
     
-            // Update the course's prerequisites, antirequisites, and professor ID
-            courseToUpdate.PreReqs = newPrerequisites.map(prereqCode => {
-                const prereqCourse = courses.find(course => course.Code === prereqCode);
-                return prereqCourse || null; 
+            const updatedCourses = courses.map((course) => {
+                if (course.ID === editingCourseId) {
+                    return { ...course, Prof_Id: newProfId }; // Create a new object with the updated professor ID
+                }
+                return course;
             });
-    
-            courseToUpdate.AntiReqs = newAntirequisites.map(antireqCode => {
-                const antireqCourse = courses.find(course => course.Code === antireqCode);
-                return antireqCourse || null;
-            });
-    
-            courseToUpdate.ProfId = newProfId; 
-    
-            const updatedCourses = [
-                ...courses.slice(0, courseIndex),
-                courseToUpdate,
-                ...courses.slice(courseIndex + 1)
-            ];
-    
+
             setCourses(updatedCourses);
-            //TODO: call back to save new course info to API/db
         }
     
         setEditingCourseId(null); // Close the popup after saving
@@ -152,13 +245,13 @@ export default function EditCourseList() {
             <br></br>
             <div className="courseList">
                 {sortCoursesByCode(filteredCourses).map( course => (
-                    <div key={course.Id}>
+                    <div key={course.ID}>
                         <div className="course"> 
                             <div className="postRow">
                                 <div className="postField"> 
                                     <div className="same-line">
                                         <div className="largeText"> {course.Code}: {course.Name}</div>
-                                        <FontAwesomeIcon className="editIcon" icon={faEdit} style={{cursor: `pointer`}} onClick={() => setEditingCourseId(course.Id)}/>
+                                        <FontAwesomeIcon className="editIcon" icon={faEdit} style={{cursor: `pointer`}} onClick={() => setEditingCourseId(course.ID)}/>
                                     </div>
                                     <br></br>
                                     {editingCourseId !== null && <EditCoursePopup
@@ -171,27 +264,21 @@ export default function EditCourseList() {
                                     <h1>{course.Description}</h1>
                                     <div>
                                     <strong>Prerequisites: </strong>
-                                        {course.PreReqs && course.PreReqs.length > 0
-                                            ? course.PreReqs.map((preReq, index) => (
-                                                <span key={preReq.Id}>
-                                                {preReq.Code}{index < course.PreReqs.length - 1 ? ', ' : ''}
-                                                </span>
-                                            ))
-                                            : <span>None</span>
-                                        }
+                                    {coursePrerequisites[course.ID] ? (
+                                        <span>{coursePrerequisites[course.ID].join(', ')}</span>
+                                        ) : (
+                                        <span>None</span>
+                                    )}
                                     </div>
                                     <div>
                                         <strong>Antirequisites: </strong>
-                                        {course.AntiReqs && course.AntiReqs.length > 0
-                                            ? course.AntiReqs.map((antiReq, index) => (
-                                                <span key={antiReq.Id}>
-                                                {antiReq.Code}{index < course.AntiReqs.length - 1 ? ', ' : ''}
-                                                </span>
-                                            ))
-                                            : <span>None</span>
-                                        }
+                                        {courseAntirequisites[course.ID] ? (
+                                        <span>{courseAntirequisites[course.ID].join(', ')}</span>
+                                        ) : (
+                                        <span>None</span>
+                                    )}
                                     </div>
-                                    <h1>Taught by: {getProfessorNameById(course.ProfId)}</h1>
+                                    <h1>Taught by: {getProfessorNameById(course.Prof_Id)}</h1>
                                 </div>
                             </div>
                         </div>

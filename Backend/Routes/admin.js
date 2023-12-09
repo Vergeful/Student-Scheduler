@@ -10,8 +10,10 @@ const {
     deleteRequiredCourse,
     getPrerequisites,
     getAntirequisites,
-    getProfs/*,
-    updateCourse*/
+    getProfs,
+    updateCoursePrereqs,
+    updateCourseAntireqs,
+    updateCourseProf
 } = require('../Controllers/admin');
 
 router.get('/info/:adminId', getAdminInfo);
@@ -23,9 +25,15 @@ router.get('/:degreeId/courses', getDegreeRequiredCourses);
 router.route('/:degreeId/:courseId')
     .post(addRequiredCourse)
     .delete(deleteRequiredCourse);
- router.get('/:courseId/prerequisites', getPrerequisites);
+router.get('/:courseId/prerequisites', getPrerequisites);
 router.get('/:courseId/antirequisites', getAntirequisites);
-router.get('/:adminId/profs', getProfs);/*
+router.get('/:adminId/profs', getProfs);
+router.post('/:courseId/update/prerequisites', updateCoursePrereqs);
+router.post('/:courseId/update/antirequisites', updateCourseAntireqs);
+router.post('/:courseId/update/antirequisites', updateCourseAntireqs);
+router.post('/:courseId/update/:profId', updateCourseProf);
+
+/*
 router.put('/:depId/courses/:courseId', updateCourse);*/
 
 module.exports = router;

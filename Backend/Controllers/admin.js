@@ -46,12 +46,9 @@ const getDegreeRequiredCourses = async(req, res) => {
         JOIN DEGREE_REQUIRES_COURSE AS drc ON c.ID = drc.Course_id
         WHERE drc.Degree_id = ?
     `, [degreeId]);   
-     if (courses.length != 0) {
-        res.status(StatusCodes.OK).json(courses);
-        console.log(courses);
-    } else {
-        res.status(StatusCodes.NOT_FOUND).json({ error: 'Degrees not found' });
-    }};
+    res.status(StatusCodes.OK).json(courses);
+    console.log(courses);
+};
 
 const addRequiredCourse = async(req, res) => {
     const { degreeId, courseId } = req.params;
@@ -79,12 +76,9 @@ const getPrerequisites = async(req, res) => {
         JOIN DB.COURSE_PREREQS AS cp ON c.ID = cp.Prereq_id
         WHERE cp.Course_id = ?   
     `, [courseId]);
-    if (rows.length != 0) {
-        res.status(StatusCodes.OK).json(rows); 
-        console.log(rows);
-    } else {
-        res.status(StatusCodes.NOT_FOUND).json({ error: 'No prereqs found' });
-    }
+    res.status(StatusCodes.OK).json(rows); 
+    console.log(rows);
+
 };
 
 const getAntirequisites = async(req, res) => {
@@ -95,13 +89,8 @@ const getAntirequisites = async(req, res) => {
         JOIN DB.COURSE_ANTIREQS AS ca ON c.ID = ca.Antireq_id
         WHERE ca.Course_id = ?
     `, [courseId]);
-    if (rows.length != 0) {
-        res.status(StatusCodes.OK).json(rows); 
-        console.log(rows);
-    } else {
-        res.status(StatusCodes.NOT_FOUND).json({ error: 'No antireqs found' });
-    }
-
+    res.status(StatusCodes.OK).json(rows); 
+    console.log(rows);
 };
 
 const getProfs = async(req, res) => {
@@ -118,38 +107,83 @@ const getProfs = async(req, res) => {
         return res.status(404).json({ error: 'No professors found for this admin' });
     }
 
+    console.log(profRows)
+
     res.status(200).json(profRows);
 };
 
 const updateCoursePrereqs = async(req, res) => {
-    const [course] = await pool.promise().query('SELECT ID FROM COURSE WHERE Code = ?', [courseCode]);
-    if (course.length === 0) {
-        return res.status(404).json({ error: 'Course code does not exist.' });
-    }
-    const courseId = course[0].ID;
+    const { courseId } = req.params;
+    const { prerequisites } = req.body;
 
-    // Delete existing prerequisites
-    await pool.promise().query('DELETE FROM COURSE_PREREQS WHERE Course_id = ?', [courseId]);
-
-    // Validate and insert new prerequisites
-    for (const code of prereqCodes) {
-        const [prereq] = await pool.promise().query('SELECT ID FROM COURSE WHERE Code = ?', [code]);
-        if (prereq.length > 0) {
-            const prereqId = prereq[0].ID;
-            await connection.query('INSERT INTO COURSE_PREREQS (Course_id, Prereq_id) VALUES (?, ?)', [courseId, prereqId]);
-        } else {
-            console.error(`Prerequisite course code ${code} does not exist.`);
-            // Depending on the requirement, you can continue or abort the transaction
-            // For this example, we'll continue but skip the non-existing codes
-        }
-    }
-
-    // Commit transaction
-    await connection.commit();
-    connection.release();
-    res.status(200).json({ message: 'Prerequisites updated successfully' });
+     // Validate the provided courseId
+     const [courseRows] = await pool.promise().query('SELECT * FROM COURSE WHERE ID = ?', [courseId]);
+     if (courseRows.length === 0) {
+         return res.status(404).json({ error: 'Course not found with provided ID.' });
+     }
+ 
+     // Delete existing prerequisites
+     await pool.promise().query('DELETE FROM COURSE_PREREQS WHERE Course_id = ?', [courseId]);
+ 
+     // Validate and insert new prerequisites
+     for (const prereq of prerequisites) {
+         const [prereqRows] = await pool.promise().query('SELECT ID FROM COURSE WHERE Code = ?', [prereq]);
+         if (prereqRows.length > 0) {
+             const prereqId = prereqRows[0].ID;
+             await pool.promise().query('INSERT INTO COURSE_PREREQS (Course_id, Prereq_id) VALUES (?, ?)', [courseId, prereqId]);
+         } else {
+             console.error(`Prerequisite course code ${prereq} does not exist.`);
+         }
+     }
+     console.log("Updated successfully");
+     res.status(200).json({ message: 'Prerequisites updated successfully' });
 };  
 
+const updateCourseAntireqs = async(req, res) => {
+    const { courseId } = req.params;
+    const { antirequisites } = req.body;
+
+    console.log("Entered func")
+     const [courseRows] = await pool.promise().query('SELECT * FROM COURSE WHERE ID = ?', [courseId]);
+     if (courseRows.length === 0) {
+         return res.status(404).json({ error: 'Course not found with provided ID.' });
+     }
+ 
+     await pool.promise().query('DELETE FROM COURSE_ANTIREQS WHERE Course_id = ?', [courseId]);
+ 
+     console.log("Deleted")
+
+     for (const antireq of antirequisites) {
+         const [antireqRows] = await pool.promise().query('SELECT ID FROM COURSE WHERE Code = ?', [antireq]);
+         if (antireqRows.length > 0) {
+             const antireqId = antireqRows[0].ID;
+             await pool.promise().query('INSERT INTO COURSE_ANTIREQS (Course_id, Antireq_id) VALUES (?, ?)', [courseId, antireqId]);
+         } else {
+             console.error(`Prerequisite course code ${antireq} does not exist.`);
+         }
+     }
+     console.log("Updated successfully");
+     res.status(200).json({ message: 'Antirequisites updated successfully' });
+};  
+
+const updateCourseProf = async(req, res) => {
+    const { courseId, profId } = req.params;
+    const [courseRows] = await pool.promise().query('SELECT * FROM COURSE WHERE ID = ?', [courseId]);
+    if (courseRows.length === 0) {
+        return res.status(404).json({ error: 'Course not found with provided ID.' });
+    }
+
+    const [professorRows] = await pool.promise().query('SELECT * FROM PROFESSOR WHERE ID = ?', [profId]);
+    if (professorRows.length === 0) {
+        return res.status(404).json({ error: 'Professor not found with provided ID.' });
+    }
+
+    // Update the course with the new professor ID
+    await pool.promise().query('UPDATE COURSE SET Prof_id = ? WHERE ID = ?', [profId, courseId]);
+
+    console.log("Professor " + profId + " updated successfully");
+    res.status(200).json({ message: 'Course updated successfully with new professor.' });
+};  
 
 module.exports = {
     getAdminInfo,
@@ -161,5 +195,7 @@ module.exports = {
     getPrerequisites,
     getAntirequisites,
     getProfs,
-    updateCoursePrereqs
+    updateCoursePrereqs,
+    updateCourseAntireqs,
+    updateCourseProf
 }
