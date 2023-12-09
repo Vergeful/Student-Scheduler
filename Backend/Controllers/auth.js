@@ -29,7 +29,7 @@ const studentLogin = async(req, res) => {
 
         res.cookie("access_token", token, {
             httpOnly: true
-        }).status(StatusCodes.OK).json({id: rows[0].ID, name: rows[0].FName});
+        }).status(StatusCodes.OK).json({id: rows[0].ID, name: rows[0].FName, type: "student"});
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Student could not be found' });
     }
@@ -62,14 +62,17 @@ const adminLogin = async(req, res) => {
 
         res.cookie("access_token", token, {
             httpOnly: true
-        }).status(StatusCodes.OK).json({id: rows[0].ID, name: rows[0].FName});
+        }).status(StatusCodes.OK).json({id: rows[0].ID, name: rows[0].FName, type: "admin"});
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Admin could not be found' });
     }
 }
 
 const logout = async(req, res) => {
-
+    res.clearCookie("access_token", {
+        sameSite: "none",
+        secure: true
+    }).status(StatusCodes.OK).json("Logout successful");
 }
 
 module.exports = {adminLogin, studentLogin, logout}

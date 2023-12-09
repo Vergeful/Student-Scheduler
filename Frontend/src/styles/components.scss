@@ -10,13 +10,34 @@
       height: 10vh;
       background-color: v.$darkBlue;
       display: flex;
-      align-items: center;
+      align-items: baseline;
       padding: 0 20px;
       font-size: 3rem;
       font-weight: bold;
 
       h1{
          letter-spacing: .4rem;
+         margin-right: auto;
+      }
+
+      .loggedIn{
+         display: flex;
+         column-gap: 20px;
+         font-size: 1.75rem;
+
+         button{
+            border-radius: 5px;
+            padding: 5px;
+            size: 1.25rem;
+            background-color: v.$brown;
+         }
+
+         button:hover{
+            background-color:v.$brown;
+            color: v.$darkBlue;
+            position: relative;
+            top: -2px;
+         }
       }
    }
 

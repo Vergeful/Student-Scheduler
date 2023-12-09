@@ -1,13 +1,12 @@
 import React from "react"
 import {useState, useEffect, useContext} from 'react';
-import axios from "axios";
-// import AuthContext from "../Context/authProvider";
+import AuthContext from "../Context/authProvider";
 import '../styles/components.scss'
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    // const {setUser} = useContext(AuthContext);
     const navigate = useNavigate();
+    const {adminLogin, studentLogin} = useContext(AuthContext);
 
     const [id, setId] = useState('');
     const [email, setEmail] = useState('');
@@ -19,11 +18,11 @@ export default function Login() {
         e.preventDefault();
         try{
             if(type === "admin"){
-                const res = await axios.post(`http://localhost:3000/api/auth/admin`, {id, email, password})
+                await adminLogin({id, email, password});
                 navigate("/admin")
                 alert("You have logged in as an admin!");
             }else{
-                const res = await axios.post(`http://localhost:3000/api/auth/student`, {id, email, password})
+                await studentLogin({id, email, password});
                 navigate("/student")
                 alert("You have logged in as a student!");
             }
