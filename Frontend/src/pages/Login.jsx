@@ -21,11 +21,11 @@ export default function Login() {
             if(type === "admin"){
                 const res = await axios.post(`http://localhost:3000/api/auth/admin`, {id, email, password})
                 navigate("/admin")
-                alert("admin");
+                alert("You have logged in as an admin!");
             }else{
                 const res = await axios.post(`http://localhost:3000/api/auth/student`, {id, email, password})
                 navigate("/student")
-                alert("student");
+                alert("You have logged in as a student!");
             }
         }catch(err){
             console.log(err);
