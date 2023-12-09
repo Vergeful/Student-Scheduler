@@ -65,13 +65,7 @@
                color: v.$darkBlue;
                outline-color: v.$brown;
             }
-
-            .error{
-               font-size: 1rem;
-               color: red;
-               background-color: black;
-            }
-
+            
             .radio-buttons{
                display: flex;
                justify-content: center;
@@ -80,6 +74,11 @@
                input[type='radio'] {
                   accent-color: v.$brown;
               }
+            }
+
+            p{
+               font-size: 1rem;
+               color: red;
             }
 
          }

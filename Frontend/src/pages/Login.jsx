@@ -1,63 +1,55 @@
 import React from "react"
 import {useState, useEffect, useContext} from 'react';
-
-import AuthContext from "../Context/authProvider";
-import axios from "../api/axios";
-const LOGIN_URL = '/login'
-
+import axios from "axios";
+// import AuthContext from "../Context/authProvider";
 import '../styles/components.scss'
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const {setUser} = useContext(AuthContext);
+    // const {setUser} = useContext(AuthContext);
+    const navigate = useNavigate();
 
+    const [id, setId] = useState('');
     const [email, setEmail] = useState('');
-    const [pwd, setPwd] = useState('');
+    const [password, setPassword] = useState('');
     const [type, setType] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false);
-
+    const [error, setError] = useState(null);
+    
     const handleSubmit = async(e) => {
         e.preventDefault();
-
         try{
-            const res = await axios.post(LOGIN_URL, JSON.stringify({email, pwd, type}),
-                {
-                    headers: {'Content-Type': 'application/json'},
-                    withCredentials: true
-                }
-            );
-
-            const accessToken = res?.data?.accessToken;
-            setUser({email, pwd, type, accessToken});
-        }catch(err){
-            if(!err?.response){
-               setErrMsg('Server did not respond');
-            }else if(err.response?.status === 401){
-                setErrMsg('Invalid credentials');
+            if(type === "admin"){
+                const res = await axios.post(`http://localhost:3000/api/auth/admin`, {id, email, password})
+                navigate("/admin")
+                alert("admin");
             }else{
-                setErrMsg('Login failed');
+                const res = await axios.post(`http://localhost:3000/api/auth/student`, {id, email, password})
+                navigate("/student")
+                alert("student");
             }
+        }catch(err){
+            console.log(err);
+            setError(err.response.data.error)
+            
         }
-
-        setEmail('');
-        setPwd('');
-        setSuccess(true);
     }
 
     return (
         <div className="login">
             <h1>Welcome to the your favorite Student Scheduler!</h1>
             <h3>We strive to improve student experiences by helping them plan their degrees.</h3>
-
-            {
-                success ?
-                    <div>
-                        Your are logged in!
-                    </div> :
                      <form onSubmit={handleSubmit}>
                      <input 
                          type="text" 
-                         placeholder="email"
+                         placeholder="ID"
+                         onChange={(e) => setId(e.target.value)}
+                         value = {id}
+                         required 
+                     />
+
+                     <input 
+                         type="text" 
+                         placeholder="Email"
                          onChange={(e) => setEmail(e.target.value)}
                          value = {email}
                          required 
@@ -65,9 +57,9 @@ export default function Login() {
      
                      <input 
                          type="password" 
-                         placeholder="password"
-                         onChange={(e) => setPwd(e.target.value)}
-                         value = {pwd}
+                         placeholder="Password"
+                         onChange={(e) => setPassword(e.target.value)}
+                         value = {password}
                          required 
                      />
      
@@ -99,8 +91,9 @@ export default function Login() {
                          </div>
                      </div>
                      <button>Login</button>
+                     {error && <p>{error}</p>}
                  </form>
-            }
+            
         </div>
     )
 }

@@ -1,6 +1,5 @@
 const {StatusCodes} = require('http-status-codes')
 const { pool } = require('../Database/connect');
-const {BadRequestError, CantFindError} = require('../Errors')
 
 const getMajorMinorConc= async(req, res) => {
     const { studentId } = req.params;
@@ -94,7 +93,7 @@ const createRating= async(req, res) => {
             if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
             return res.json("Rating could not be created.");
         });
-    res.status(StatusCodes.OK).json();
+    res.status(StatusCodes.CREATED).json();
 }
 
 const getSemesterCourses= async(req, res) => {
