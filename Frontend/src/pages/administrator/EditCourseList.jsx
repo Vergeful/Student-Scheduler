@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import "../../styles/courseList.scss"
 import "../../styles/popup.scss"
 import EditCoursePopup from "../../components/EditCoursePopup";
+import Toggle from '../../components/Toggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEdit } from '@fortawesome/free-solid-svg-icons';
 
@@ -12,14 +13,29 @@ export default function EditCourseList() {
     const adminId = '1000'; 
     const { depId, degreeId } = useParams(); // Get the parameters from the URL
 
+    const [isActive, setIsActive] = useState(false);
+
     const [searchValue, setSearchValue] = useState('');
     const [editingCourseId, setEditingCourseId] = useState(null);
     const [courses, setCourses] = useState([]);
     const [reqCourses, setReqCourses] = useState([]); 
     const [profs, setProfs] = useState([]); 
 
+    const [displayedCourses, setDisplayedCourses] = useState(courses);
     const [coursePrerequisites, setCoursePrerequisites] = useState({});
     const [courseAntirequisites, setCourseAntirequisites] = useState({});
+
+    useEffect(() => {
+        let filteredCourses = isActive ? reqCourses : courses;
+    
+        if (searchValue) {
+          filteredCourses = filteredCourses.filter(course =>
+            course.Code.toLowerCase().includes(searchValue.toLowerCase())
+          );
+        }
+    
+        setDisplayedCourses(filteredCourses);
+      }, [isActive, searchValue, courses, reqCourses]);
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -121,18 +137,15 @@ export default function EditCourseList() {
           return numA - numB;
         });
       };
-      
 
-    //for search functionality
-    const filteredCourses = courses.filter(course => 
-        course.Code.toLowerCase().includes(searchValue.toLowerCase())
-    );
-
-    const search = (event) => {
-        setSearchValue(event.target.value); // Update the searchValue state
+    const handleToggle = () => {
+        setIsActive(!isActive);
     };
 
-    //if popup is cancelled
+    const handleSearch = (event) => {
+        setSearchValue(event.target.value);
+    };
+
     const handleCancelEdit = () => {
         setEditingCourseId(null); 
     };
@@ -237,14 +250,15 @@ export default function EditCourseList() {
                     id="searchbar"
                     value={searchValue}
                     placeholder="Search"
-                    onChange={search}
+                    onChange={handleSearch}
                 />
                 </div>
             </div>
             <br></br>
+            <Toggle onToggleChange={handleToggle} />
             <br></br>
             <div className="courseList">
-                {sortCoursesByCode(filteredCourses).map( course => (
+                {sortCoursesByCode(displayedCourses).map( course => (
                     <div key={course.ID}>
                         <div className="course"> 
                             <div className="postRow">

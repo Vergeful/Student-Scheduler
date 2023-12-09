@@ -1,0 +1,34 @@
+@use 'variables' as v;
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .toggle {
+    width: 50px; /* Adjust size as needed */
+    height: 25px; /* Adjust size as needed */
+    background-color: #ccc; /* Inactive color */
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .toggle.active {
+    background-color: v.$darkBlue; /* Active color */
+  }
+  
+  .toggle-button {
+    width: 20px; /* Adjust size as needed */
+    height: 20px; /* Adjust size as needed */
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2.5px; /* Adjust to center vertically */
+    left: 2.5px; /* Adjust to position within the toggle */
+    transition: all 0.3s;
+  }
+  
+  .toggle.active .toggle-button {
+    left: 25px; /* Adjust to move to the active position */
+  }
