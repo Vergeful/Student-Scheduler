@@ -14,23 +14,33 @@ const {
     getEnrolledCoursesForSemester,
     getSemesterCourse,
     getCourseAvgRating,
-    updateEnrollmentForCourse,
-    getPrerequisitesAntirequisites
-
+    enrollInCourse,
+    unenrollInCourse,
+    getPrerequisites,
+    getAntirequisites
 } = require('../Controllers/student')
 
-router.route('/degrees').get(getMajorMinorConc)
-router.route('/semesters').get(getSemesters)
-router.route('/major').patch(updateMajor)
-router.route('/minor').patch(updateMinor)
-router.route('/conc').patch(updateConc)
-router.route('/courses').get(getAllCourses)
-router.route('/course/:id').patch(createRating)
-router.route('/semester-courses:id').get(getSemesterCourses)
-router.route('/semester-uncompleted-degree:id').get(getUncompletedDegreeCoursesForSemester)
-router.route('/semester-enrolled:id').get(getEnrolledCoursesForSemester)
-router.route('/semester/:id/course/:id').get(getSemesterCourse).patch(updateEnrollmentForCourse)
-router.route('/semester/:id/course-rating/:id').get(getCourseAvgRating)
-router.route('/semester/:id/course-pre-anti/:id').get(getPrerequisitesAntirequisites)
+router.get('/:studentId/degrees', getMajorMinorConc)
+router.get('/semesters', getSemesters)
+
+router.patch('/:studentId/major/:majId', updateMajor)
+router.patch('/:studentId/minor/:minId', updateMinor)
+router.patch('/:studentId/conc/:concId', updateConc)
+
+router.get('/courses', getAllCourses)
+router.post('/:studentId/course/:courseId', createRating)
+
+router.get('/semester-courses/:semId', getSemesterCourses)
+router.get('/:studentId/semester-uncompleted-degree/:semId', getUncompletedDegreeCoursesForSemester)
+router.get('/:studentId/semester-enrolled/:semId', getEnrolledCoursesForSemester)
+
+router.route('/:studentId/detailed-course/:courseId')
+    .get(getSemesterCourse)
+    .post(enrollInCourse)
+    .delete(unenrollInCourse)
+
+router.get('/course-rating/:courseId', getCourseAvgRating)
+router.get('/course-pre/:courseId', getPrerequisites)
+router.get('/course-anti/:courseId', getAntirequisites)
 
 module.exports = router
