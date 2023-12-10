@@ -17,6 +17,18 @@ const getMajorMinorConc= async(req, res) => {
     }
 }
 
+const getAllDegrees= async(req, res) => {
+    const [rows] = await pool.promise().query(`
+        SELECT  ID AS DEGREE_ID, Name AS DEGREE_NAME
+        FROM    DEGREE`);
+    
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Student degree information could not be found' });
+    }
+}
+
 const updateMajor= async(req, res) => {
     const { studentId, majId } = req.params;
     const [rows] = await pool.promise().query(`
@@ -49,7 +61,7 @@ const updateConc= async(req, res) => {
     const { studentId, concId} = req.params;
     const [rows] = await pool.promise().query(`
         UPDATE	STUDENT
-        SET		STUDENT.Minor_id = ?
+        SET		STUDENT.Conc_id = ?
         WHERE	STUDENT.Id = ?`, 
     [concId, studentId]);
     if (rows.length > 0) {
@@ -247,6 +259,7 @@ const getAntirequisites= async(req, res) => {
 
 module.exports = {
     getMajorMinorConc,
+    getAllDegrees,
     updateMajor,
     updateMinor,
     updateConc,
