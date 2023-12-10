@@ -19,7 +19,7 @@ export default function Login() {
         try{
             if(type === "admin"){
                 await adminLogin({id, email, password});
-                navigate("/admin")
+                navigate(`/admin/${id}`)
                 alert("You have logged in as an admin!");
             }else{
                 await studentLogin({id, email, password});

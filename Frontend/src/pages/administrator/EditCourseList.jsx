@@ -11,8 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function EditCourseList() {
 
-    const adminId = '1000'; 
-    const { depId, degreeId } = useParams(); // Get the parameters from the URL
+    const { depId, degreeId, adminId } = useParams(); // Get the parameters from the URL
 
     const [isActive, setIsActive] = useState(false);
 
@@ -29,7 +28,7 @@ export default function EditCourseList() {
     const navigate = useNavigate(); 
 
     const goBack = () => {
-        navigate('/'); 
+        navigate(`/admin/${adminId}`); 
     };
 
     useEffect(() => {
