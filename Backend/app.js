@@ -24,7 +24,7 @@ app.use(cors());  // CORS policy to allow cross-origin requests
 // Rate limiting to prevent brute-force attacks
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,  // 15 minutes
-    max: 50  // limit each IP to 50 requests per windowMs
+    max: 200  // limit each IP to 50 requests per windowMs
 });
 app.use(limiter);
 
