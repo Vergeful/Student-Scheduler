@@ -57,14 +57,6 @@ const router = createBrowserRouter([
         element: <AdminHome/>
       },
       {
-        path: "/admin/degree",
-        element: <SelectedDegree/>
-      },
-      {
-        path: "admin/degree/:id/course/:id",
-        element: <EditSelectedCourse/>
-      },
-      {
         path: "/admin/degree-courses/:depId/degree/:degreeId",
         element: <EditCourseList/>
       },

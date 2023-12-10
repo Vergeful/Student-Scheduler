@@ -6,14 +6,14 @@ const {
     getDeptDegrees,
     getDeptCourses,
     getDegreeRequiredCourses,
-    addRequiredCourse,
-    deleteRequiredCourse,
     getPrerequisites,
     getAntirequisites,
     getProfs,
     updateCoursePrereqs,
     updateCourseAntireqs,
-    updateCourseProf
+    updateCourseProf,
+    addRequiredCourse,
+    removeRequiredCourse
 } = require('../Controllers/admin');
 
 router.get('/info/:adminId', getAdminInfo);
@@ -24,7 +24,7 @@ router.get('/departments/:depId/courses', getDeptCourses);
 router.get('/:degreeId/courses', getDegreeRequiredCourses);
 router.route('/:degreeId/:courseId')
     .post(addRequiredCourse)
-    .delete(deleteRequiredCourse);
+    .delete(removeRequiredCourse);
 router.get('/:courseId/prerequisites', getPrerequisites);
 router.get('/:courseId/antirequisites', getAntirequisites);
 router.get('/:adminId/profs', getProfs);

@@ -50,15 +50,6 @@ const getDegreeRequiredCourses = async(req, res) => {
     console.log(courses);
 };
 
-const addRequiredCourse = async(req, res) => {
-    const { degreeId, courseId } = req.params;
-    await pool.promise().query(`
-        INSERT INTO DEGREE_REQUIRES_COURSE (Degree_id, Course_id)
-        VALUES (?, ?)
-    `, [degreeId, courseId]);
-    res.status(StatusCodes.CREATED).json({ message: 'Course added to degree successfully' });
-};
-
 const deleteRequiredCourse = async(req, res) => {
     const { degreeId, courseId } = req.params; // assuming courseId is part of the route parameters
     await pool.promise().query(`
@@ -185,17 +176,48 @@ const updateCourseProf = async(req, res) => {
     res.status(200).json({ message: 'Course updated successfully with new professor.' });
 };  
 
+const addRequiredCourse = async(req, res) => {
+    const { degreeId, courseId } = req.params;
+    await pool.promise().query(`
+        INSERT INTO DEGREE_REQUIRES_COURSE (Degree_id, Course_id)
+        VALUES (?, ?)
+    `, [degreeId, courseId]);
+    res.status(StatusCodes.CREATED).json({ message: 'Course added to degree successfully' });
+};  
+
+const removeRequiredCourse = async(req, res) => {
+    const { degreeId, courseId } = req.params;
+    try {
+        const [result] = await pool.promise().query(`
+            DELETE FROM DEGREE_REQUIRES_COURSE
+            WHERE Degree_id = ? AND Course_id = ?
+        `, [degreeId, courseId]);
+
+        if (result.affectedRows === 0) {
+            // No rows affected means no match was found, so the course was not a required course for the degree.
+            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Course not found in degree requirements' });
+        }
+
+        res.status(StatusCodes.OK).json({ message: 'Course removed from degree successfully' });
+    } catch (error) {
+        console.error('Error removing required course: ', error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error removing course from degree' });
+    }
+};  
+
+
 module.exports = {
     getAdminInfo,
     getDeptDegrees,
     getDeptCourses,
     getDegreeRequiredCourses,
-    addRequiredCourse,
     deleteRequiredCourse,
     getPrerequisites,
     getAntirequisites,
     getProfs,
     updateCoursePrereqs,
     updateCourseAntireqs,
-    updateCourseProf
+    updateCourseProf,
+    addRequiredCourse,
+    removeRequiredCourse
 }

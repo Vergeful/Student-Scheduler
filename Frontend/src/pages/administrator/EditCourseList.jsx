@@ -5,8 +5,9 @@ import "../../styles/popup.scss"
 import EditCoursePopup from "../../components/EditCoursePopup";
 import Toggle from '../../components/Toggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faEdit } from '@fortawesome/free-solid-svg-icons';
-
+import { faSearch, faEdit, faStar as fasFaStar} from '@fortawesome/free-solid-svg-icons';
+import { faStar as farFaStar } from '@fortawesome/free-regular-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function EditCourseList() {
 
@@ -24,6 +25,12 @@ export default function EditCourseList() {
     const [displayedCourses, setDisplayedCourses] = useState(courses);
     const [coursePrerequisites, setCoursePrerequisites] = useState({});
     const [courseAntirequisites, setCourseAntirequisites] = useState({});
+
+    const navigate = useNavigate(); 
+
+    const goBack = () => {
+        navigate('/'); 
+    };
 
     useEffect(() => {
         let filteredCourses = isActive ? reqCourses : courses;
@@ -138,9 +145,18 @@ export default function EditCourseList() {
         });
       };
 
-    const handleToggle = () => {
+    const handleToggleSwitch = () => {
         setIsActive(!isActive);
     };
+
+    const toggleReqCourse = (courseId) => {
+        if (reqCourses.find(course => course.ID === courseId)) {
+          setReqCourses(reqCourses.filter(course => course.ID !== courseId));
+        } else {
+          const courseToAdd = courses.find(course => course.ID === courseId);
+          setReqCourses([...reqCourses, courseToAdd]);
+        }
+      };
 
     const handleSearch = (event) => {
         setSearchValue(event.target.value);
@@ -233,6 +249,19 @@ export default function EditCourseList() {
             });
 
             setCourses(updatedCourses);
+
+            const reqCourseIndex = reqCourses.findIndex(course => course.ID === editingCourseId);
+            if (reqCourseIndex > -1) {
+              const updatedReqCourses = reqCourses.map((course) => {
+                if (course.ID === editingCourseId) {
+                  return { ...course, Prof_Id: newProfId }; // Update the required course as well
+                }
+                return course;
+              });
+        
+              // Update the reqCourses state
+              setReqCourses(updatedReqCourses);
+            }
         }
     
         setEditingCourseId(null); // Close the popup after saving
@@ -241,21 +270,25 @@ export default function EditCourseList() {
 
     return (
         <div className={"course-list-bg"} id="courseList">
-            <strong className="title"> Course List</strong>
-            <div className="search-line" style={{marginLeft: '70rem'}}>
-                <div className="search-box">
-                <FontAwesomeIcon className="search-icon" icon={faSearch}/>
-                <input
-                    className="searchbar"
-                    id="searchbar"
-                    value={searchValue}
-                    placeholder="Search"
-                    onChange={handleSearch}
-                />
+            <div className="header-container" >
+                <strong className="title"> Course List</strong>
+                <button className="back" style={{cursor: `pointer`, marginRight:`2.5rem`}} onClick={goBack}>Back</button> 
+            </div>
+            <div className="same-line" style={{marginLeft: '5px', marginTop:`20px`}}>
+                <Toggle onToggleChange={handleToggleSwitch}/>
+                <div className="search-line" style={{marginLeft: '920px', marginTop: `35px`}}>
+                    <div className="search-box">
+                    <FontAwesomeIcon className="search-icon" icon={faSearch}/>
+                    <input
+                        className="searchbar"
+                        id="searchbar"
+                        value={searchValue}
+                        placeholder="Search"
+                        onChange={handleSearch}
+                    />
+                    </div>
                 </div>
             </div>
-            <br></br>
-            <Toggle onToggleChange={handleToggle} />
             <br></br>
             <div className="courseList">
                 {sortCoursesByCode(displayedCourses).map( course => (
@@ -266,6 +299,10 @@ export default function EditCourseList() {
                                     <div className="same-line">
                                         <div className="largeText"> {course.Code}: {course.Name}</div>
                                         <FontAwesomeIcon className="editIcon" icon={faEdit} style={{cursor: `pointer`}} onClick={() => setEditingCourseId(course.ID)}/>
+                                        <FontAwesomeIcon icon={reqCourses.find(c => c.ID === course.ID) ? fasFaStar : farFaStar} style={{cursor: `pointer`, marginLeft:`10px`}} 
+                                            className="star-icon"
+                                            onClick={() => toggleReqCourse(course.ID)}
+                                        />
                                     </div>
                                     <br></br>
                                     {editingCourseId !== null && <EditCoursePopup
