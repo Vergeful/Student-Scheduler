@@ -1,1 +1,18 @@
 @use 'variables' as v;
+
+.studentSemester{
+    display: flex;
+    flex-direction: column;
+    row-gap: 15vh;
+
+    .top .bottom{
+        background-color: v.$pale;
+    }
+
+    .top{
+        display: flex;
+        column-gap: 15vw;
+    }
+
+    
+}
