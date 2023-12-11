@@ -4,6 +4,25 @@ import axios from "axios";
 import '../../styles/studentCourse.scss';
 import {useParams } from "react-router-dom";
 
+
+    // Enroll
+    async function enroll(sId, cId){
+        try{
+            const response  = await axios.post(`http://localhost:3000/api/student/${sId}/detailed-course/${cId}`);
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    // Unenroll
+    async function unenroll(sId, cId){
+        try{
+            const response  = await axios.delete(`http://localhost:3000/api/student/${sId}/detailed-course/${cId}`);
+        }catch(err){
+            console.log(err);
+        }
+    }
+    
 export default function StudentCourse() {
     const {user} = useContext(AuthContext);
     let { courseId } = useParams();
@@ -12,6 +31,9 @@ export default function StudentCourse() {
     const [rating, setRating] = useState();
     const [pre, setPre] = useState([]);
     const [anti, setAnti] = useState([]);
+
+    // Stores repsonse for both enrollment and unenrollment
+    const[enrollRes, setEnrollRes] = useState({});
 
 
     // Get course
@@ -27,7 +49,8 @@ export default function StudentCourse() {
     // Get rating
     async function getRating(){
         try{
-
+            const response  = await axios.get(`http://localhost:3000/api/student/course-rating/${courseId}`);
+            setRating(response.data);
         }catch(err){
             console.log(err);
         }
@@ -53,32 +76,22 @@ export default function StudentCourse() {
         }
     }
 
-    // Enroll
-    async function enroll(){
-        try{
-
-        }catch(err){
-            console.log(err);
-        }
-    }
-
-    // Unenroll
-    async function unenroll(){
-        try{
-
-        }catch(err){
-            console.log(err);
-        }
-    }
-
     useEffect(() =>{
         getCourse();
-        // getRating();
+        getRating();
         getPrereqs();
         getAntireqs();
       }, [])
 
+    const onEnrollHandler = async() => {
+       await enroll(user.id, courseId);
+       alert("Enrolled");
+    }
 
+    const onUnenrollHandler = async() => {
+        await unenroll(user.id, courseId);
+        alert("Unenrolled!");
+    }
 
     return (
         <div className="studentCourse">
@@ -88,10 +101,10 @@ export default function StudentCourse() {
                 <div className="info">
                     <div>Course Code: {course.COURSE_CODE}</div>
                     <div>Course Name: {course.COURSE_NAME}</div>
-                    <div>Course Rating : {null || "null"}</div>
+                    <div>Course Rating : {rating > 0 ? rating.AVERAGE_COURSE_DIFFICULTY : "N/A"}</div>
                     <div className="buttons">
-                        <button>ENROLL</button>
-                        <button>UNENROLL</button>
+                        <button onClick={onEnrollHandler}>ENROLL</button>
+                        <button onClick={onUnenrollHandler}>UNENROLL</button>
                     </div>
                 </div> 
                 :<span>N/A</span>}
