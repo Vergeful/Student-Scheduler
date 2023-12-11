@@ -107,13 +107,13 @@ const createRating= async(req, res) => {
         if (existing.length > 0) {
             // Update the existing rating
             await pool.promise().query(
-                "UPDATE RATING SET Difficulty = ?, Comment = ? WHERE Student_id = ? AND Course_id = ?",
+                "UPDATE RATING SET Difficulty = ?, Student_comment = ? WHERE Student_id = ? AND Course_id = ?",
                 [difficulty, comment, studentId, courseId]
             );
         } else {
             // Insert a new rating
             await pool.promise().query(
-                "INSERT INTO RATING (Student_id, Course_id, Difficulty, Comment) VALUES (?, ?, ?, ?)",
+                "INSERT INTO RATING (Student_id, Course_id, Difficulty, Student_comment) VALUES (?, ?, ?, ?)",
                 [studentId, courseId, difficulty, comment]
             );
         }
@@ -157,7 +157,6 @@ const getUncompletedDegreeCoursesForSemester= async(req, res) => {
                         WHERE 	    S.ID = ? AND S.ID = E.Student_id
                         AND		    C.ID = E.Course_id)`, 
         [semId, studentId, studentId]);
-    console.log(rows);
     if (rows.length > 0) {
         res.status(StatusCodes.OK).json(rows);
     } else {

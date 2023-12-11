@@ -101,7 +101,7 @@ export default function StudentCourse() {
                 <div className="info">
                     <div>Course Code: {course.COURSE_CODE}</div>
                     <div>Course Name: {course.COURSE_NAME}</div>
-                    <div>Course Rating : {rating > 0 ? rating.AVERAGE_COURSE_DIFFICULTY : "N/A"}</div>
+                    <div>Course Difficulty : {rating ? rating.AVERAGE_COURSE_DIFFICULTY : "N/A"}</div>
                     <div className="buttons">
                         <button onClick={onEnrollHandler}>ENROLL</button>
                         <button onClick={onUnenrollHandler}>UNENROLL</button>
