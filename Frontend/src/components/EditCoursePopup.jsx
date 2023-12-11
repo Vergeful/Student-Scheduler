@@ -10,14 +10,43 @@ export default function EditCoursePopup({courses, profs, onSave, onCancel, cours
 
     // Effect to set the initial state when the component mounts or courseId changes
     useEffect(() => {
-        const courseToEdit = courses.find(course => course.Id === courseId);
+        const courseToEdit = courses.find(course => course.ID === courseId);
+
+        const fetchPrereqs = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courseId}/prerequisites`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const prereqCodes = data.map(course => course.Code);
+                setSelectedPrerequisites(prereqCodes);
+            } catch (error) {
+                console.error("Fetching prereqs failed", error);
+            }
+        };
+
+        const fetchAntireqs = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${courseId}/antirequisites`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const antireqCodes = data.map(course => course.Code);
+                setSelectedAntirequisites(antireqCodes);
+            } catch (error) {
+                console.error("Fetching antireqs failed", error);
+            }
+        };
 
         if (courseToEdit) {
-            setSelectedPrerequisites(courseToEdit.PreReqs.map(preReq => preReq.Code));
-            setSelectedAntirequisites(courseToEdit.AntiReqs.map(antiReq => antiReq.Code));
-            const teachingProf = profs.find(prof => prof.Id === courseToEdit.ProfId);
+            fetchPrereqs();
+            fetchAntireqs();
+            
+            const teachingProf = profs.find(prof => prof.Id == courseToEdit.Prof_Id);
             if (teachingProf) {
-                setSelectedTaughtById(teachingProf.Id); // or teachingProf.FName + ' ' + teachingProf.LName
+                setSelectedTaughtById(teachingProf.Id); 
             }
         }
     }, [courseId, courses, profs]);
@@ -38,16 +67,14 @@ export default function EditCoursePopup({courses, profs, onSave, onCancel, cours
                 return prevSelected;
             }
             if (prevSelected.includes(courseCode)) {
-                // Remove the course if it's already selected
                 return prevSelected.filter(code => code !== courseCode);
             } else {
-                // Add the course if it's not already selected
                 return [...prevSelected, courseCode];
             }
         });
     };
 
-    const handleAntieqSelection = (courseCode) => {
+    const handleAntireqSelection = (courseCode) => {
         setSelectedAntirequisites(prevSelected => {
             if (selectedPrerequisites.includes(courseCode)){
                 return prevSelected;
@@ -72,9 +99,9 @@ export default function EditCoursePopup({courses, profs, onSave, onCancel, cours
             <div className="same-line input-form">
                 <label htmlFor="course-select"><h1>Prerequisites:</h1></label>
                 <div className="course-select-box">
-                    {courses.map(course => (
+                    {courses.map((course, index) => (
                         <div 
-                            key={course.Id} 
+                            key={`course-pre-${course.ID}-${index}`} 
                             onClick={() => handlePrereqSelection(course.Code)}
                             className={`course-option ${selectedPrerequisites.includes(course.Code) ? 'selected' : ''}`}
                         >
@@ -86,10 +113,10 @@ export default function EditCoursePopup({courses, profs, onSave, onCancel, cours
             <div className="same-line input-form">
                 <label htmlFor="course-select"><h1>Antirequisites:</h1></label>
                 <div className="course-select-box">
-                    {courses.map(course => (
+                    {courses.map((course, index) => (
                         <div 
-                            key={course.Id} 
-                            onClick={() => handleAntieqSelection(course.Code)}
+                            key={`course-antis-${course.ID}-${index}`} 
+                            onClick={() => handleAntireqSelection(course.Code)}
                             className={`course-option ${selectedAntiRequisites.includes(course.Code) ? 'selected' : ''}`}
                         >
                             {course.Code}
@@ -105,9 +132,9 @@ export default function EditCoursePopup({courses, profs, onSave, onCancel, cours
                     value={selectedTaughtById} 
                     onChange={handleTaughtByChange}
                 >
-                    {profs.map(prof => (
-                        <option key={prof.Id} value={prof.Id}>
-                            {prof.FName} {prof.LName}
+                    {profs.map((prof, index) => (
+                    <option key={`prof-${prof.Id}-${index}`} value={prof.Id}>
+                        {prof.FName} {prof.LName}
                         </option>
                     ))}
                 </select>

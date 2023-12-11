@@ -1,17 +1,20 @@
   import React, { useState, useEffect } from "react";
-  import { useNavigate } from "react-router-dom";
+  import { useNavigate, useParams } from "react-router-dom";
   import "../../styles/adminHome.scss";
   
   export default function AdminHome() {
     let navigate = useNavigate();
     const [degrees, setDegrees] = useState([]);
-  
-    useEffect(() => {
-      const departmentId = '10'; 
+    const { adminId } = useParams(); // Get the parameters from the URL
+    const [departmentId, setDepartmentId] = useState(null);
 
-      const fetchDegrees = async () => {
+
+    useEffect(() => {
+      // Define the async function inside the useEffect
+      const fetchDataAndDegrees = async () => {
         try {
-          const response = await fetch(`http://localhost:5173/api/departments/${departmentId}/degrees`);
+          // Fetching admin info
+          const response = await fetch(`http://localhost:3000/api/admin/info/${adminId}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -19,18 +22,30 @@
           if (!contentType || !contentType.includes('application/json')) {
             throw new TypeError("Oops, we haven't got JSON!");
           }
-          const degreesData = await response.json();
-          setDegrees(degreesData);
+          const data = await response.json();
+          setDepartmentId(data.Dep_id); // Assume this sets a single ID, not an object
+    
+          // Fetching degrees after successfully getting the department ID
+          if (data) { // Assuming 'data' contains the department ID needed for the next fetch
+            const degreesResponse = await fetch(`http://localhost:3000/api/admin/departments/${data.Dep_id}/degrees`);
+            if (!degreesResponse.ok) {
+              throw new Error(`HTTP error! status: ${degreesResponse.status}`);
+            }
+            const degreesContentType = degreesResponse.headers.get('content-type');
+            if (!degreesContentType || !degreesContentType.includes('application/json')) {
+              throw new TypeError("Oops, we haven't got JSON!");
+            }
+            const degreesData = await degreesResponse.json();
+            setDegrees(degreesData);
+          }
         } catch (error) {
-          console.error('Error fetching degrees:', error);
-          // Handle errors as appropriate for your application
+          console.error('Error fetching data:', error);
         }
       };
-  
-      fetchDegrees();
-    }, []); // The empty array ensures this effect runs once on mount
-  
-  
+    
+      fetchDataAndDegrees();
+    }, [adminId]);
+
     // Function to handle routing
     const handleNavigation = (path) => {
       navigate(path);
@@ -38,14 +53,14 @@
   
     return (
       <div className="background-box">
-        <h1>Admin Dashboard</h1>
+        <h1 style={{paddingBottom: `15px`}}>Admin Dashboard</h1>
         <div className="buttons">
           {degrees.map((degree) => (
             <button
-              key={degree.Id}
+              key={degree.ID}
               className="webtool-button"
-              onClick={() => handleNavigation(degree.Id)}
-            >
+              onClick={() => handleNavigation(`/admin/degree-courses/${departmentId}/degree/${degree.ID}/${adminId}`)}
+              >
               {degree.Name}
             </button>
           ))}

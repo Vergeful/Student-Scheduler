@@ -20,15 +20,20 @@
     font-weight: bold;
     color: v.$darkBlue;
     background-color: v.$pale;
+    
 }
 .input-form h1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center; // Align items vertically
     font-size: 18px;
+    width: 100px;
     max-width: 100px;
     color: v.$darkBlue;
     background-color: v.$pale;
     padding-right: 50px;
-    text-align:left;
-
+    text-align:right;
+    min-width: 100px;
 }
 .input-form input {
     font-size: 15px;
@@ -50,6 +55,18 @@
     padding-right: 50px;
     border: 1px solid #011627;
     border-radius: 1em;
+}
+.input-form .comment-textarea {
+    width: 182px; // Full width minus the padding
+    margin: 5px 0; // Add some margin for spacing
+    padding: 10px; // Padding inside the inputs
+    border: 1px solid #011627;
+    border-radius: 0.5em; // Rounded corners
+}
+
+.input-form .comment-textarea {
+    height: auto; // Initial height, it will expand with content
+    resize: vertical; // Allows users to resize the textarea vertically
 }
 .cancel-button {
     font-size: 15px;
