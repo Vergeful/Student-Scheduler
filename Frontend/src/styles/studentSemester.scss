@@ -3,16 +3,53 @@
 .studentSemester{
     display: flex;
     flex-direction: column;
-    row-gap: 15vh;
+    justify-content: space-around;
+    row-gap: 5vh;
+    width: 80vw;;
 
-    .top .bottom{
-        background-color: v.$pale;
-    }
+    .enrolledCourses , .uncompletedRequiredCourses, .allSemesterCourses{
+       display: flex;
+       flex-direction: column;
+       background-color: v.$pale;
+       height: 20vh;
+       border-radius: 5px;
+       border: 5px solid v.$brown;
+       box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+       padding: 5px;;
 
-    .top{
+       .semHeader{
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+       }
+
+       .semList{
         display: flex;
-        column-gap: 15vw;
+        align-items: baseline;
+        overflow-x: auto;
+        column-gap: 2vw;
+        padding: 10px;
+
+            .semItem{
+                font-size: 1.5rem;
+                height: 5vh;
+                background-color: v.$blue;
+                padding: 10px;
+                border-radius: 5px;;
+            }
+
+            .semItem:hover{
+                color: white;
+                background-color: v.$darkBlue;
+            }
+       }
     }
 
     
+}
+
+a{
+    text-decoration: none;
+    color: black;
 }

@@ -152,7 +152,7 @@ const getUncompletedDegreeCoursesForSemester= async(req, res) => {
 const getEnrolledCoursesForSemester= async(req, res) => {
     const {studentId, semId } = req.params;
     const [rows] = await pool.promise().query(`
-        SELECT	    C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NUMBER
+        SELECT	    C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NAME
         FROM		COURSE AS C, SEMESTER_OFFERS_COURSE AS T, ENROLLED_IN AS E
         WHERE	    T.Semester_id = ? AND C.ID = T.Course_id	
         AND		    E.Student_id = ? AND E.Course_id = C.ID`, 

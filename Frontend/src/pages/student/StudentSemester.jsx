@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 
 export default function StudentSemester() {
     const {user} = useContext(AuthContext);
-    let { courseId } = useParams();
+    let { id } = useParams();
 
     const [enrolled, setEnrolled] = useState([]);
     const [uncompleted, setUncompleted] = useState([]);
@@ -50,21 +50,62 @@ export default function StudentSemester() {
 
     return (
         <div className ="studentSemester">
-            <div className = "top">
+            <div className = "enrolledCourses">
+                <div className="semHeader">ENROLLED COURSES</div>
 
-
-                <div className = "enrolledCourses">
-
-
+                <div className="semList">
+                {enrolled && enrolled.length > 0
+                    ? enrolled.map( course => (
+                        <Link to = {"course/" + course.COURSE_ID.toString()}>
+                            <div key={course.COURSE_ID} className="semItem">
+                                {course.COURSE_CODE}
+                            </div>
+                        </Link>          
+                        ))
+                    : <span>N/A</span>
+                }
                 </div>
-                <div className = "uncompletedRequiredCourses">
-
-                </div>  
-            </div>
-
-            <div className= "bottom allSemesterCourses">
 
             </div>
+
+            <div className = "uncompletedRequiredCourses">
+                <div className="semHeader">MAJOR REQUIRED COURSES</div>
+
+                <div className="semList">
+                    {uncompleted && uncompleted.length > 0
+                            ? uncompleted.map( course => (
+                                <Link to = {"course/" + course.COURSE_ID.toString()}>
+                                    <div key={course.COURSE_ID} className="semItem">
+                                    {course.COURSE_CODE}
+                                </div>   
+                                </Link>       
+                                ))
+                            : <span>N/A</span>
+                        }  
+                </div>
+                
+            </div>  
+           
+
+            <div className= "allSemesterCourses">
+                <div className="semHeader">ALL SEMESTER COURSES</div>
+
+                <div className="semList">
+                    {all && all.length > 0
+                            ? all.map( course => (
+                                <Link to= {"course/" + course.COURSE_ID.toString()}>
+                                    <div key={course.COURSE_ID} className="semItem">
+                                        {course.COURSE_CODE}
+                                    </div>
+                                </Link>       
+                                ))
+                            : <span>N/A</span>
+                        }  
+                </div>
+
+            </div>
+
+
         </div>
     )
 }
