@@ -27,7 +27,8 @@ export default function StudentCourse() {
     // Get rating
     async function getRating(){
         try{
-
+            const response  = await axios.get(`http://localhost:3000/api/student/course-rating/${courseId}`);
+            setRating(response.data);
         }catch(err){
             console.log(err);
         }
@@ -73,7 +74,7 @@ export default function StudentCourse() {
 
     useEffect(() =>{
         getCourse();
-        // getRating();
+        getRating();
         getPrereqs();
         getAntireqs();
       }, [])
@@ -88,7 +89,7 @@ export default function StudentCourse() {
                 <div className="info">
                     <div>Course Code: {course.COURSE_CODE}</div>
                     <div>Course Name: {course.COURSE_NAME}</div>
-                    <div>Course Rating : {null || "null"}</div>
+                    <div>Course Rating : {rating.AVERAGE_COURSE_DIFFICULTY || "NOT YET RATED"}</div>
                     <div className="buttons">
                         <button>ENROLL</button>
                         <button>UNENROLL</button>
