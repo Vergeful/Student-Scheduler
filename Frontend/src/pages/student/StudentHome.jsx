@@ -3,6 +3,7 @@ import AuthContext from "../../Context/authProvider"
 import axios from "axios";
 import '../../styles/studentHome.scss';
 import { Link } from "react-router-dom";
+import RatingPopup from "../../components/RatingPopup";
 
 
 export default function StudentHome() {
@@ -26,6 +27,13 @@ export default function StudentHome() {
     const [concForm, setConcForm] = useState();
 
     const {user} = useContext(AuthContext);
+
+    const [showRatingPopup, setShowRatingPopup] = useState(false);
+
+    const toggleRatingPopup = () => {
+        setShowRatingPopup(!showRatingPopup);
+    };
+
 
     // Get user degree info
     async function getDegree(){
@@ -194,7 +202,8 @@ export default function StudentHome() {
             </div>
            </div>
 
-           <button className="rating">LEAVE A RATING FOR A COURSE!</button>
+           <button className="rating" onClick={toggleRatingPopup}>LEAVE A RATING FOR A COURSE!</button>
+           {showRatingPopup && <RatingPopup studentId={user.id} onCancel={toggleRatingPopup} />}
         </div>
     )
 }

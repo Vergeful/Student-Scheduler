@@ -97,15 +97,31 @@ const createRating= async(req, res) => {
     const { studentId, courseId } = req.params;
     const { difficulty, comment} = req.body;
 
-    const insertQuery = `INSERT INTO RATING VALUES (?, ?, ?, ?)`;
-    const insertValues = [studentId, courseId, difficulty, comment];
+    try {
+        // Check if a rating already exists
+        const [existing] = await pool.promise().query(
+            "SELECT * FROM RATING WHERE Student_id = ? AND Course_id = ?",
+            [studentId, courseId]
+        );
 
-    await pool.promise().query
-        (insertQuery, insertValues, (err, data) => {
-            if (err) return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
-            return res.json("Rating could not be created.");
-        });
-    res.status(StatusCodes.CREATED).json();
+        if (existing.length > 0) {
+            // Update the existing rating
+            await pool.promise().query(
+                "UPDATE RATING SET Difficulty = ?, Comment = ? WHERE Student_id = ? AND Course_id = ?",
+                [difficulty, comment, studentId, courseId]
+            );
+        } else {
+            // Insert a new rating
+            await pool.promise().query(
+                "INSERT INTO RATING (Student_id, Course_id, Difficulty, Comment) VALUES (?, ?, ?, ?)",
+                [studentId, courseId, difficulty, comment]
+            );
+        }
+
+        res.status(StatusCodes.CREATED).json({ message: "Rating updated successfully" });
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err);
+    }
 }
 
 const getSemesterCourses= async(req, res) => {
@@ -256,6 +272,23 @@ const getAntirequisites= async(req, res) => {
     }
 }
 
+const getEnrolledCourses = async(req, res) => {
+    const { studentId } = req.params;
+    try {
+        const [rows] = await pool.promise().query(`
+            SELECT		C.ID, C.Code, C.Name, C.Description, C.Prof_id, C.Dep_id
+            FROM		COURSE AS C
+            INNER JOIN	ENROLLED_IN AS E ON C.ID = E.Course_id
+            WHERE		E.Student_id = ?`, 
+        [studentId]);
+
+        res.status(200).json(rows);
+        
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error', details: error.message });
+    }
+}
+
 module.exports = {
     getMajorMinorConc,
     getAllDegrees,
@@ -273,6 +306,7 @@ module.exports = {
     enrollInCourse,
     unenrollInCourse,
     getPrerequisites,
-    getAntirequisites
+    getAntirequisites,
+    getEnrolledCourses
 }
 
