@@ -172,7 +172,7 @@ const getSemesterCourse= async(req, res) => {
         WHERE   ID = ?`,
     [courseId]);
     if (rows.length > 0) {
-        res.status(StatusCodes.OK).json(rows);
+        res.status(StatusCodes.OK).json(rows[0]);
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Course could not be found' });
     }

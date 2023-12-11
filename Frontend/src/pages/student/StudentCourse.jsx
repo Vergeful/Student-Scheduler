@@ -18,6 +18,7 @@ export default function StudentCourse() {
     async function getCourse(){
         try{
             const response  = await axios.get(`http://localhost:3000/api/student/${user.id}/detailed-course/${courseId}`);
+            setCourse(response.data);
         }catch(err){
             console.log(err);
         }
@@ -71,7 +72,7 @@ export default function StudentCourse() {
     }
 
     useEffect(() =>{
-        // getCourse();
+        getCourse();
         // getRating();
         getPrereqs();
         getAntireqs();
@@ -83,8 +84,19 @@ export default function StudentCourse() {
         <div className="studentCourse">
             <div className="details">
                 <div className="studentCourseHeader">COURSE DETAILS</div>
-
+                {course ? 
+                <div className="info">
+                    <div>Course Code: {course.COURSE_CODE}</div>
+                    <div>Course Name: {course.COURSE_NAME}</div>
+                    <div>Course Rating : {null || "null"}</div>
+                    <div className="buttons">
+                        <button>ENROLL</button>
+                        <button>UNENROLL</button>
+                    </div>
+                </div> 
+                :<span>N/A</span>}
             </div>
+
             <div className="prereqs">
                 <div className="studentCourseHeader">COURSE PREREQUISITES</div>
                 <div className="antiPreList">

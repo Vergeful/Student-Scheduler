@@ -56,4 +56,24 @@
         }
     }
 
+    .details{
+        padding: 10px;
+
+        .info{
+            font-weight: 500;
+
+            button{
+                background-color: v.$darkBlue;
+                padding: 12px;
+                border-radius: 5px;
+            }
+
+            button:hover{
+                color: white;
+                background-color: v.$darkBlue;
+            }
+        }
+        
+    }
+
 }
