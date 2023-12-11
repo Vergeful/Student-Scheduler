@@ -27,18 +27,27 @@
     }
 }
 
-/*Styling for the title.*/
-.title{
-    background-color: v.$blue;
-    padding: 1rem 2rem;
-    border-radius: 1rem;
-    width: fit-content;
-    box-shadow: 3px 3px #00000033;
-    font-size: 1.5rem;
-    justify-content: space-between;
-    height: 200px;
+.header-container {
+    display: flex;
+    align-items: center; /* This will vertically center align items inside the container */
+    justify-content: space-between; /* This will place the title and button on opposite ends */
 }
 
+.title {
+    background-color: v.$blue; /* Assuming you have CSS variables set up */
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 3px 3px #00000033;
+    font-size: 1.5rem;
+}
+
+.back {
+    background-color: v.$brown;
+    padding: 1rem 2rem; 
+    border-radius: 1rem;
+    box-shadow: 3px 3px #00000033;
+    font-size: 1rem;
+}
 
 .largeText{
     font-size: 25px;
