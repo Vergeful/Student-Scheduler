@@ -69,7 +69,7 @@ export default function StudentSemester() {
             </div>
 
             <div className = "uncompletedRequiredCourses">
-                <div className="semHeader">MAJOR REQUIRED COURSES</div>
+                <div className="semHeader">MAJOR REQUIRED COURSES YOU CAN TAKE NOW</div>
 
                 <div className="semList">
                     {uncompleted && uncompleted.length > 0
@@ -85,17 +85,17 @@ export default function StudentSemester() {
                 </div>
                 
             </div>  
-           
-
+    
             <div className= "allSemesterCourses">
                 <div className="semHeader">ALL SEMESTER COURSES</div>
 
-                <div className="semList">
+                <div className="semList semAll">
                     {all && all.length > 0
                             ? all.map( course => (
                                 <Link to= {"course/" + course.COURSE_ID.toString()}>
                                     <div key={course.COURSE_ID} className="semItem">
-                                        {course.COURSE_CODE}
+                                        <div>{course.COURSE_CODE}</div>
+                                        <div>{course.PROFESSOR_FIRST_NAME}</div>
                                     </div>
                                 </Link>       
                                 ))

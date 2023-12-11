@@ -157,7 +157,6 @@ const getEnrolledCoursesForSemester= async(req, res) => {
         WHERE	    T.Semester_id = ? AND C.ID = T.Course_id	
         AND		    E.Student_id = ? AND E.Course_id = C.ID`, 
     [semId, studentId]);
-    console.log(rows);
     if (rows.length > 0) {
     res.status(StatusCodes.OK).json(rows);
     } else {
@@ -235,7 +234,7 @@ const getPrerequisites= async(req, res) => {
     [courseId]);
 
     if (rows.length > 0) {
-        res.status(StatusCodes.OK).json(rows[0]);
+        res.status(StatusCodes.OK).json(rows);
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Course prereqs could not be found' });
     }
@@ -251,7 +250,7 @@ const getAntirequisites= async(req, res) => {
     [courseId]);
 
     if (rows.length > 0) {
-        res.status(StatusCodes.OK).json(rows[0]);
+        res.status(StatusCodes.OK).json(rows);
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Course antireqs could not be found' });
     }
