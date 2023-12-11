@@ -17,6 +17,18 @@ const getMajorMinorConc= async(req, res) => {
     }
 }
 
+const getAllDegrees= async(req, res) => {
+    const [rows] = await pool.promise().query(`
+        SELECT  ID AS DEGREE_ID, Name AS DEGREE_NAME
+        FROM    DEGREE`);
+    
+    if (rows.length > 0) {
+        res.status(StatusCodes.OK).json(rows);
+    } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Student degree information could not be found' });
+    }
+}
+
 const updateMajor= async(req, res) => {
     const { studentId, majId } = req.params;
     const [rows] = await pool.promise().query(`
@@ -49,7 +61,7 @@ const updateConc= async(req, res) => {
     const { studentId, concId} = req.params;
     const [rows] = await pool.promise().query(`
         UPDATE	STUDENT
-        SET		STUDENT.Minor_id = ?
+        SET		STUDENT.Conc_id = ?
         WHERE	STUDENT.Id = ?`, 
     [concId, studentId]);
     if (rows.length > 0) {
@@ -140,12 +152,11 @@ const getUncompletedDegreeCoursesForSemester= async(req, res) => {
 const getEnrolledCoursesForSemester= async(req, res) => {
     const {studentId, semId } = req.params;
     const [rows] = await pool.promise().query(`
-        SELECT	    C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NUMBER
+        SELECT	    C.ID AS COURSE_ID, C.Code AS COURSE_CODE, C.Name AS COURSE_NAME
         FROM		COURSE AS C, SEMESTER_OFFERS_COURSE AS T, ENROLLED_IN AS E
         WHERE	    T.Semester_id = ? AND C.ID = T.Course_id	
         AND		    E.Student_id = ? AND E.Course_id = C.ID`, 
     [semId, studentId]);
-    console.log(rows);
     if (rows.length > 0) {
     res.status(StatusCodes.OK).json(rows);
     } else {
@@ -161,7 +172,7 @@ const getSemesterCourse= async(req, res) => {
         WHERE   ID = ?`,
     [courseId]);
     if (rows.length > 0) {
-        res.status(StatusCodes.OK).json(rows);
+        res.status(StatusCodes.OK).json(rows[0]);
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Course could not be found' });
     }
@@ -223,7 +234,7 @@ const getPrerequisites= async(req, res) => {
     [courseId]);
 
     if (rows.length > 0) {
-        res.status(StatusCodes.OK).json(rows[0]);
+        res.status(StatusCodes.OK).json(rows);
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Course prereqs could not be found' });
     }
@@ -239,7 +250,7 @@ const getAntirequisites= async(req, res) => {
     [courseId]);
 
     if (rows.length > 0) {
-        res.status(StatusCodes.OK).json(rows[0]);
+        res.status(StatusCodes.OK).json(rows);
     } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Course antireqs could not be found' });
     }
@@ -247,6 +258,7 @@ const getAntirequisites= async(req, res) => {
 
 module.exports = {
     getMajorMinorConc,
+    getAllDegrees,
     updateMajor,
     updateMinor,
     updateConc,

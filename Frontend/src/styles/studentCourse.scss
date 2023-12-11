@@ -1,1 +1,79 @@
 @use 'variables' as v;
+
+.studentCourse{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    row-gap: 5vh;
+    width: 80vw;
+
+
+
+    .details, .prereqs, .antireqs{
+        display: flex;
+        flex-direction: column;
+        background-color: v.$pale;
+        height: 20vh;
+        border-radius: 5px;
+        border: 5px solid v.$brown;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        padding: 5px;;
+
+        .studentCourseHeader{
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .studentCourseHeader:hover{
+            color: v.$darkBlue;
+        }
+
+
+        .antiPreList{
+            display: flex;
+            align-items: baseline;
+            overflow-x: auto;
+            column-gap: 2vw;
+            padding: 10px;
+
+
+            .antiPreItem{
+                font-size: 1rem;
+                height: 5vh;
+                background-color: v.$blue;
+                padding: 10px;
+                border-radius: 5px;
+                text-align: center;
+                
+            }
+
+            .antiPreItem:hover{
+                color: white;
+                background-color: v.$darkBlue;
+            }
+        }
+    }
+
+    .details{
+        padding: 10px;
+
+        .info{
+            font-weight: 500;
+
+            button{
+                background-color: v.$darkBlue;
+                padding: 12px;
+                border-radius: 5px;
+            }
+
+            button:hover{
+                color: white;
+                background-color: v.$darkBlue;
+            }
+        }
+        
+    }
+
+}

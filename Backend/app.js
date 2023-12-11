@@ -24,11 +24,11 @@ app.use(cors({
 }));  // CORS policy to allow cross-origin requests
 
 // Rate limiting to prevent brute-force attacks
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,  // 15 minutes
-    max: 5000  // limit each IP requests per windowMs
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000,  // 15 minutes
+//     max: 500  // limit each IP to 500 requests per windowMs
+// });
+// app.use(limiter);
 
 // Built-in middleware function in express that parses incoming requests with JSON payloads
 app.use(express.json());

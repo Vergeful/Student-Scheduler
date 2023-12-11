@@ -3,6 +3,7 @@ const router = express.Router()
 
 const {
     getMajorMinorConc,
+    getAllDegrees,
     updateMajor,
     updateMinor,
     updateConc,
@@ -21,11 +22,12 @@ const {
 } = require('../Controllers/student')
 
 router.get('/:studentId/degrees', getMajorMinorConc)
+router.get('/getAllDegrees', getAllDegrees)
 router.get('/semesters', getSemesters)
 
-router.patch('/:studentId/major/:majId', updateMajor)
-router.patch('/:studentId/minor/:minId', updateMinor)
-router.patch('/:studentId/conc/:concId', updateConc)
+router.post('/:studentId/major/:majId', updateMajor)
+router.post('/:studentId/minor/:minId', updateMinor)
+router.post('/:studentId/conc/:concId', updateConc)
 
 router.get('/courses', getAllCourses)
 router.post('/:studentId/course/:courseId', createRating)
