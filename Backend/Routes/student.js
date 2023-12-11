@@ -3,6 +3,7 @@ const router = express.Router()
 
 const {
     getMajorMinorConc,
+    getAllDegrees,
     updateMajor,
     updateMinor,
     updateConc,
@@ -14,23 +15,34 @@ const {
     getEnrolledCoursesForSemester,
     getSemesterCourse,
     getCourseAvgRating,
-    updateEnrollmentForCourse,
-    getPrerequisitesAntirequisites
-
+    enrollInCourse,
+    unenrollInCourse,
+    getPrerequisites,
+    getAntirequisites
 } = require('../Controllers/student')
 
-router.route('/student/degrees').get(getMajorMinorConc)
-router.route('/student/semesters').get(getSemesters)
-router.route('student/major').patch(updateMajor)
-router.route('student/minor').patch(updateMinor)
-router.route('student/conc').patch(updateConc)
-router.route('/student/courses').get(getAllCourses)
-router.route('/student/course/:id').patch(createRating)
-router.route('/student/semester-courses:id').get(getSemesterCourses)
-router.route('/student/semester-uncompleted-degree:id').get(getUncompletedDegreeCoursesForSemester)
-router.route('/student/semester-enrolled:id').get(getEnrolledCoursesForSemester)
-router.route('student/semester/:id/course/:id').get(getSemesterCourse).patch(updateEnrollmentForCourse)
-router.route('student/semester/:id/course-rating/:id').get(getCourseAvgRating)
-router.route('student/semester/:id/course-pre-anti/:id').get(getPrerequisitesAntirequisites)
+router.get('/:studentId/degrees', getMajorMinorConc)
+router.get('/getAllDegrees', getAllDegrees)
+router.get('/semesters', getSemesters)
+
+router.post('/:studentId/major/:majId', updateMajor)
+router.post('/:studentId/minor/:minId', updateMinor)
+router.post('/:studentId/conc/:concId', updateConc)
+
+router.get('/courses', getAllCourses)
+router.post('/:studentId/course/:courseId', createRating)
+
+router.get('/semester-courses/:semId', getSemesterCourses)
+router.get('/:studentId/semester-uncompleted-degree/:semId', getUncompletedDegreeCoursesForSemester)
+router.get('/:studentId/semester-enrolled/:semId', getEnrolledCoursesForSemester)
+
+router.route('/:studentId/detailed-course/:courseId')
+    .get(getSemesterCourse)
+    .post(enrollInCourse)
+    .delete(unenrollInCourse)
+
+router.get('/course-rating/:courseId', getCourseAvgRating)
+router.get('/course-pre/:courseId', getPrerequisites)
+router.get('/course-anti/:courseId', getAntirequisites)
 
 module.exports = router

@@ -1,45 +1,55 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const {StatusCodes} = require('http-status-codes')
 
-const cors = require('cors')
-const helmet= require('helmet')
+const cookieParser = require('cookie-parser');
 
-require('dotenv').config() // allows access to .env (local environment) variables via process.env
-require('express-async-errors') // middleware for errors
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+const helmet = require('helmet');
+require('dotenv').config();
+require('express-async-errors');
 
-//MIDDLEWARE:
-// Built in middleware function in express that parses incoming requests with JSON payloads:
-app.use(express.json());
-
-// Middleware for security:
-app.set('trust proxy', 1)
-app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
-    max: 50 // 50 requests can be made per windowMs
-}))
-app.use(cors())
-app.use(helmet())
-app.use(rateLimit())
-
-// Middleware if there is an error in finding page (404 status code):
+// Import routers
+const adminRoutes = require('./Routes/admin');
+const authRoutes = require('./Routes/auth');
+const studentRoutes = require('./Routes/student');
 const cantFindMiddleware = require('./Middleware/cantFind');
 
-// Routes
-app.use('/api', loginRouter)
-app.use('/api', adminRouter)
-app.use('/api', studentRouter)
+const app = express();
 
-app.use(cantFindMiddleware)
+// Security-related middlewares should be set up at the beginning
+app.use(helmet());
+app.use(cors());  // CORS policy to allow cross-origin requests
 
-const port = process.env.PORT || 3000
+// Rate limiting to prevent brute-force attacks
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000,  // 15 minutes
+//     max: 500  // limit each IP to 500 requests per windowMs
+// });
+// app.use(limiter);
 
-const start = async () =>{
-    try{
-        // Connection here
-        app.listen(port, () => console.log(`Server is listening on port ${port}...`))
-    }catch(error){
-        console.log(error)
-    }
-}
+// Built-in middleware function in express that parses incoming requests with JSON payloads
+app.use(express.json());
 
-start()
+// Middleware for parsing cookies
+app.use(cookieParser());
+
+// Setting up API routes
+app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/student', studentRoutes);
+
+// Middleware for 404 not found errors
+app.use(cantFindMiddleware);
+
+// Start the server
+const port = 3000;
+
+app.use((err,req,res,next) =>{
+    console.log(err.stack);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Something broke.');
+});
+
+app.listen(port, () => {
+    console.log(`Server is listening on port ${port}...`);
+});

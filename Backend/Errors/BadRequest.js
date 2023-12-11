@@ -1,4 +1,4 @@
-const CustomError = require('./custom')
+const CustomError = require('../Errors/CustomError')
 const { StatusCodes } = require('http-status-codes')
 
 class BadRequestError extends CustomError {

@@ -1,6 +1,6 @@
 // This error is used if a resource cannot be found in the database.
 
-const CustomError = require('./custom')
+const CustomError = require('../Errors/CustomError')
 const { StatusCodes } = require('http-status-codes')
 
 class CantFindError extends CustomError {

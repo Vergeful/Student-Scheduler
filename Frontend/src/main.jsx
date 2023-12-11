@@ -33,7 +33,7 @@ const router = createBrowserRouter([
     element: <Layout/>,
     children:[
       {
-        path: "",
+        path: "login",
         element: <Login/>
       },
 
@@ -47,13 +47,13 @@ const router = createBrowserRouter([
         element: <StudentSemester/>
       },
       {
-        path: "student/semester/:id/course/:id",
+        path: "student/semester/:semId/course/:courseId",
         element: <StudentCourse/>
       },
 
       // Admin routes
       {
-        path: "/admin/home",
+        path: "/admin",
         element: <AdminHome/>
       },
       {

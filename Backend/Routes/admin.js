@@ -1,27 +1,31 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
 const {
-    getDegreesDepartmentCourses,
+    getAdminInfo,
+    getDepartmentCourses,
+    getDeptDegrees,
     getDegreeCourses,
-    createRequiredCourse,
+    addRequiredCourse,
     deleteRequiredCourse,
-    getPrerequisitesAntirequisites,
-    createAntirequisite,
-    deleteAntirequisite,
-    createPrerequisite,
-    deletePrerequisite,
+    getPrerequisites,
+    getAntirequisites,
     getProfs,
-    addProf,
-    deleteProf
-} = require('../Controllers/admin')
+    updateCourse
+} = require('../Controllers/admin');
 
-router.route('/admin').get(getDegreesDepartmentCourses)
-router.route('/admin/degree/:id').get(getDegreeCourses).post(createRequiredCourse).delete(deleteRequiredCourse)
-router.route('/admin/degree/:id/course/:id').get(getPrerequisitesAntirequisites)
-router.route('/admin/degree/:id/course/:id/anti/:id').post(createAntirequisite).delete(deleteAntirequisite)
-router.route('/admin/degree/:id/course/:id/pre/:id').post(createPrerequisite).delete(deletePrerequisite)
-router.route('/admin/dept-course/:id').get(getProfs).post(addProf).delete(deleteProf);
+router.get('/info/:adminId', getAdminInfo);
+// Retrieve all degrees and their associated department courses
+router.get('/department/:depId/courses', getDepartmentCourses);
+router.get('/departments/:depId/degrees', getDeptDegrees);
+// Retrieve, add, or delete courses for a specific degree
+router.route('/:degreeId/courses')
+      .get(getDegreeCourses)
+      .post(addRequiredCourse)
+      .delete(deleteRequiredCourse);
+router.get('/:courseId/prerequisites', getPrerequisites);
+router.get('/:courseId/antirequisites', getAntirequisites);
+router.get('/:adminId/profs', getProfs);
+router.put('/:depId/courses/:courseId', updateCourse);
 
-module.exports = router
-
+module.exports = router;

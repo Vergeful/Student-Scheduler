@@ -1,8 +1,11 @@
-import mysql from "mysql"
+const mysql = require('mysql2');
 
-export const db = mysql.createConnection({
-  host:"localhost",
-  user:"root",
-  password: process.env.DB_KEY,
-  database:"student"
-})
+const pool = mysql.createPool({
+  host: "student-scheduler.cyezik8lqkhe.us-east-2.rds.amazonaws.com", 
+  user: "admin", 
+  password: "CantTouchThis123", 
+  database: "DB", 
+  port: 3306
+}).promise();
+
+module.exports = pool;
