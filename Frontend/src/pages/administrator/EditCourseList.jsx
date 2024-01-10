@@ -266,7 +266,6 @@ export default function EditCourseList() {
         setEditingCourseId(null); // Close the popup after saving
     };
 
-
     return (
         <div className={"course-list-bg"} id="courseList">
             <div className="header-container" >

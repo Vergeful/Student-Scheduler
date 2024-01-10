@@ -7,7 +7,6 @@ export default function EditCoursePopup({courses, profs, onSave, onCancel, cours
     const [selectedAntiRequisites, setSelectedAntirequisites] = useState([]);
     const [selectedTaughtById, setSelectedTaughtById] = useState('');
 
-
     // Effect to set the initial state when the component mounts or courseId changes
     useEffect(() => {
         const courseToEdit = courses.find(course => course.ID === courseId);

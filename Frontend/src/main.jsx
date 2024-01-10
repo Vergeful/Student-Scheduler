@@ -19,8 +19,6 @@ import StudentCourse from './pages/student/StudentCourse'
 
 // Admin pages
 import AdminHome from './pages/administrator/AdminHome'
-import SelectedDegree from './pages/administrator/SelectedDegree'
-import EditSelectedCourse from './pages/administrator/EditSelectedCourse'
 import EditCourseList from './pages/administrator/EditCourseList'
 
 // Authentication

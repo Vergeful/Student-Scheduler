@@ -7,8 +7,6 @@
     row-gap: 5vh;
     width: 80vw;
 
-
-
     .details, .prereqs, .antireqs{
         display: flex;
         flex-direction: column;
@@ -29,8 +27,7 @@
         .studentCourseHeader:hover{
             color: v.$darkBlue;
         }
-
-
+        
         .antiPreList{
             display: flex;
             align-items: baseline;

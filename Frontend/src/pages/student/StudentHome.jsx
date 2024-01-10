@@ -5,7 +5,6 @@ import '../../styles/studentHome.scss';
 import { Link } from "react-router-dom";
 import RatingPopup from "../../components/RatingPopup";
 
-
 export default function StudentHome() {
     // Contains user degree info
     const [degree, setDegree] = useState({});
@@ -101,7 +100,6 @@ export default function StudentHome() {
             console.log(err);
         }
     }
-
 
     // Update degree after conc change
     const handleSubmitConc = async(e) => {

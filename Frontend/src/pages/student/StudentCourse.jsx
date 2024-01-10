@@ -4,7 +4,6 @@ import axios from "axios";
 import '../../styles/studentCourse.scss';
 import {useParams } from "react-router-dom";
 
-
     // Enroll
     async function enroll(sId, cId){
         try{
@@ -34,7 +33,6 @@ export default function StudentCourse() {
 
     // Stores repsonse for both enrollment and unenrollment
     const[enrollRes, setEnrollRes] = useState({});
-
 
     // Get course
     async function getCourse(){
